@@ -58,10 +58,14 @@ public class BlockHangedLock extends BlockLock
 
     private boolean isBlockPlaceableOnSide(World par1World, int par2, int par3, int par4, ForgeDirection side)
     {
-        return par1World.isBlockSolidOnSide(par2, par3, par4, side) ||
-                par1World.getBlockId(par2, par3, par4) == Block.chest.blockID ||
-                par1World.getBlockId(par2, par3, par4) == Block.anvil.blockID ||
-                par1World.getBlockId(par2, par3, par4) == Block.enchantmentTable.blockID;
+    	if(par1World.isBlockSolidOnSide(par2, par3, par4, side))return true;
+
+    	int id = par1World.getBlockId( par2, par3, par4);
+        for(int lockable : ModLockit.lockables)
+        {
+        	if(lockable == id)return true;
+        }
+        return false;
     }
 
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)

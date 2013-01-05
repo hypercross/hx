@@ -193,7 +193,7 @@ public class BlockLock extends BlockContainer
                     {
                         return true;
                     }
-                }
+                }else return true;
             }
         }
         else

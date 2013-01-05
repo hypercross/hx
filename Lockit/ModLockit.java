@@ -53,6 +53,9 @@ public class ModLockit extends HyperMod
     public static int bannedItems[] = {Item.sign.shiftedIndex, Item.cake.shiftedIndex};
 
     @Configurable("Protection")
+    public static int lockables[] = {Block.chest.blockID, Block.anvil.blockID, Block.enderChest.blockID};
+    
+    @Configurable("Protection")
     public static int bannedNearLock[] = {};
     
     public MonumentManager monuments;
