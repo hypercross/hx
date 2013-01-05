@@ -100,7 +100,14 @@ public class PacketHandler implements IPacketHandler {
 		if(blah.length != 2)return null;
 		
 		String name = blah[0].trim();
-		int val		= Integer.parseInt(blah[1].trim());
+		int val;
+		try
+		{
+			val= Integer.parseInt(blah[1].trim());
+		}catch(Exception e)
+		{
+			return null;
+		}
 		if(name.equals("plot"))
 		{
 			val = Math.max(val, ModLockit.maxPlotRange);
