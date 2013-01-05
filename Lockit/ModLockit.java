@@ -50,7 +50,15 @@ public class ModLockit extends HyperMod
     public static int particleDensity = 100;
 
     @Configurable("Protection")
-    public static int bannedItems[] = {Item.sign.shiftedIndex, Item.cake.shiftedIndex};
+    public static int bannedItems[] = {
+    	Item.sign.shiftedIndex, 
+    	Item.cake.shiftedIndex,
+    	Item.bed.shiftedIndex,
+    	Item.silk.shiftedIndex,
+    	Item.bucketEmpty.shiftedIndex,
+    	Item.bucketWater.shiftedIndex,
+    	Item.bucketLava.shiftedIndex};
+    
 
     @Configurable("Protection")
     public static int lockables[] = {Block.chest.blockID, Block.anvil.blockID, Block.enderChest.blockID};
