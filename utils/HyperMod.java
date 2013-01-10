@@ -6,6 +6,9 @@ import java.util.TreeMap;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
@@ -50,6 +53,7 @@ public class HyperMod
         }
     }
 
+    @PreInit
     public void preInit(FMLPreInitializationEvent event)
     {
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
@@ -102,6 +106,7 @@ public class HyperMod
         config.save();
     }
 
+    @Init
     public void load(FMLInitializationEvent event)
     {
         for (BlockLoader bl : blockLoaders.values())
@@ -113,18 +118,21 @@ public class HyperMod
         {
             il.load();
         }
+        registerRendering();
+    }
+    
+    public void registerRendering()
+    {
+    	if(FMLCommonHandler.instance().getSide().isServer())return;
+    	for (BlockLoader bl : blockLoaders.values())
+        {
+            bl.registerRenderers();
+        }
+    	MinecraftForgeClient.preloadTexture(this.MAIN_TEXTURE);
     }
 
     public void registerRendering(Object proxy)
     {
-        for (BlockLoader bl : blockLoaders.values())
-        {
-            bl.registerRenderers(proxy);
-        }
-
-        if (proxy.getClass().getName().endsWith("ClientProxy"))
-        {
-            MinecraftForgeClient.preloadTexture(this.MAIN_TEXTURE);
-        }
+        registerRendering();
     }
 }

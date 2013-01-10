@@ -5,6 +5,7 @@ import java.util.HashMap;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
@@ -88,7 +89,36 @@ public class BlockLoader
         catch (Exception e)
         {
             FMLLog.getLogger().severe("Block class NOT FOUND for " + name + "!");
+            e.printStackTrace();
         }
+    }
+    
+    public void registerRenderers()
+    {
+    	if(FMLCommonHandler.instance().getSide().isServer())return;
+    	 try
+         {
+             Class tileEntity = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name);
+             Class tileEntityRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name + "Renderer");
+             ClientRegistry.bindTileEntitySpecialRenderer(tileEntity, (TileEntitySpecialRenderer) tileEntityRenderer.newInstance());
+             FMLLog.getLogger().finest("Tile entity renderer" + name + " registered.");
+         }
+         catch (Exception e)
+         {
+             FMLLog.getLogger().fine("No Tile Entity or its renderer for " + name);
+         }
+
+         try
+         {
+             Class blockRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "Block" + name + "Renderer");
+             this.blockRI = RenderingRegistry.getNextAvailableRenderId();
+             RenderingRegistry.registerBlockHandler((ISimpleBlockRenderingHandler) blockRenderer.newInstance());
+             FMLLog.getLogger().finest("Block renderer" + name + " registered.");
+         }
+         catch (Exception e)
+         {
+             FMLLog.getLogger().fine("No special renderer for " + name);
+         }
     }
 
     public void registerRenderers(Object proxy)
@@ -97,29 +127,6 @@ public class BlockLoader
         {
             return;
         }
-
-        try
-        {
-            Class tileEntity = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name);
-            Class tileEntityRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name + "Renderer");
-            ClientRegistry.bindTileEntitySpecialRenderer(tileEntity, (TileEntitySpecialRenderer) tileEntityRenderer.newInstance());
-            FMLLog.getLogger().finest("Tile entity renderer" + name + " registered.");
-        }
-        catch (Exception e)
-        {
-            FMLLog.getLogger().fine("No Tile Entity or its renderer for " + name);
-        }
-
-        try
-        {
-            Class blockRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "Block" + name + "Renderer");
-            this.blockRI = RenderingRegistry.getNextAvailableRenderId();
-            RenderingRegistry.registerBlockHandler((ISimpleBlockRenderingHandler) blockRenderer.newInstance());
-            FMLLog.getLogger().finest("Block renderer" + name + " registered.");
-        }
-        catch (Exception e)
-        {
-            FMLLog.getLogger().fine("No special renderer for " + name);
-        }
+        registerRenderers();
     }
 }

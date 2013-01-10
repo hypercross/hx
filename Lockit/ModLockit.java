@@ -95,7 +95,6 @@ public class ModLockit extends HyperMod
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
-        super.registerRendering(proxy);
         GameRegistry.addRecipe(new RecipesKeyChain());
         GameRegistry.addRecipe(new RecipesDupKey());
         GameRegistry.addRecipe(new RecipesKeyDyes());
