@@ -66,6 +66,9 @@ public class ItemCanvas extends Item{
         
         if(w.getBlockId(_x, _y, _z)>0)return false;
         
+        int canvasID = ModMinePainter.instance.block("Canvas").id();
+        w.setBlockAndMetadataWithNotify(_x, _y, _z, canvasID, getMeta(ep, face));
+        
         if(ep.capabilities.isCreativeMode)return true;
         is.stackSize -- ;
         return true;

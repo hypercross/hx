@@ -7,8 +7,16 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.entity.passive.EntitySheep;
+
 public class MPImage {
 	byte pixels[] = new byte[256];
+	
+	public MPImage()
+	{
+//		for(int i =0;i<256;i++)
+//			pixels[i] = (byte) ( ((i%2) == ((i/16)%2)) ? 1 : 17); 
+	}
 	
 	public void fromByteArray(byte[] data)
 	{
@@ -62,6 +70,14 @@ public class MPImage {
 		y %= 16;
 		
 		return pixels[(x << 4) + y ];
+	}
+	
+	public float[] rgb_at(int x,int y)
+	{
+		int code = at(x,y);
+		if(code < 16)return null;
+		
+		return EntitySheep.fleeceColorTable[15 - (code & 15)];
 	}
 	
 	public void set(int x,int y, int color)

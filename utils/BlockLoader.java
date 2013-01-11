@@ -101,7 +101,7 @@ public class BlockLoader
              Class tileEntity = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name);
              Class tileEntityRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name + "Renderer");
              ClientRegistry.bindTileEntitySpecialRenderer(tileEntity, (TileEntitySpecialRenderer) tileEntityRenderer.newInstance());
-             FMLLog.getLogger().finest("Tile entity renderer" + name + " registered.");
+             FMLLog.getLogger().finest("Tile entity renderer " + name + " registered.");
          }
          catch (Exception e)
          {
