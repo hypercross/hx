@@ -157,19 +157,20 @@ public class BlockCanvas extends BlockContainer{
     private static ForgeDirection[] yproj=
     	{
     	ForgeDirection.NORTH,
-    	ForgeDirection.WEST,
-    	ForgeDirection.EAST,
     	ForgeDirection.SOUTH,
-
-    	ForgeDirection.UP,
-    	ForgeDirection.UP,
-    	ForgeDirection.UP,
-    	ForgeDirection.UP,
-
-    	ForgeDirection.NORTH,
     	ForgeDirection.WEST,
     	ForgeDirection.EAST,
-    	ForgeDirection.SOUTH
+
+    	ForgeDirection.UP,
+    	ForgeDirection.UP,
+    	ForgeDirection.UP,
+    	ForgeDirection.UP,
+
+    	ForgeDirection.SOUTH,
+    	ForgeDirection.NORTH,
+    	ForgeDirection.EAST,
+    	ForgeDirection.WEST,
+    	
     	};
 
     private int pixelIndex(float x,float y,float z,int face)
