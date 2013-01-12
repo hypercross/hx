@@ -1,10 +1,12 @@
 package hx.MinePainter;
 
+import net.minecraftforge.common.MinecraftForge;
 import hx.utils.HyperMod;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
@@ -35,5 +37,7 @@ public class ModMinePainter extends HyperMod{
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
+        if(FMLCommonHandler.instance().getSide().isClient())
+        	MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 }

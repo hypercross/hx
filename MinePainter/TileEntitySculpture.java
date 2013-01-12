@@ -1,5 +1,6 @@
 package hx.MinePainter;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
@@ -7,7 +8,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3Pool;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -19,8 +25,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	
 	public TileEntitySculpture()
 	{
-		Random rnd = new Random();
-		rnd.nextBytes(data);
+		Arrays.fill(data,(byte)-1);
 	}
 	
 	private boolean invalid(int x,int y,int z)
@@ -49,6 +54,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		byte strip = data[x*8+y];
 		
 		strip |= 1 << z;
+		data[x * 8 + y] = strip;
 	}
 	
 	public void del (int x,int y,int z)
@@ -57,9 +63,40 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		y%=8;
 		byte strip = data[x*8+y];
 		
-		strip ^= 1 << z; 
+		strip ^= (1 << z);
+		data[x * 8 + y] = strip;
 	}
 	
+	//TileEntity util
+	
+	@Override
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    {
+		super.writeToNBT(par1NBTTagCompound);
+		par1NBTTagCompound.setByteArray("sculpture", data);
+    }
+	
+	@Override
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    {
+		super.readFromNBT(par1NBTTagCompound);
+		data = par1NBTTagCompound.getByteArray("sculpture");
+    }
+	
+	@Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
+    {
+        readFromNBT(pkt.customParam1);
+    }
+    
 	//IBlockAccess
 
 	public void bias(int x,int y,int z)
@@ -166,6 +203,57 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	@Override
 	public boolean isBlockProvidingPowerTo(int var1, int var2, int var3,
 			int var4) {
+		return false;
+	}
+	
+	public int[] rayTrace(Vec3 start, Vec3 dist)
+	{
+		int hitX = -1;
+		int hitY = -1;
+		int hitZ = -1;
+		
+		for(int x=0;x<8;x++)
+			for(int y=0;y<8;y++)
+				for(int z=0;z<8;z++)
+				{
+					if(!get(x,y,z))continue;
+					
+					if(hitX == -1);
+					else if( (x!= hitX) && (x>hitX) == (dist.xCoord>0) )
+						continue;
+					else if( (y!= hitY) && (y>hitY) == (dist.yCoord>0) )
+						continue;
+					else if( (z!= hitZ) && (z>hitZ) == (dist.zCoord>0) )
+						continue;
+					
+					if(!cross(xCoord + x/8f, yCoord + y/8f, zCoord + z/8f, start, dist))continue;
+					
+					hitX = x;
+					hitY = y;
+					hitZ = z;
+				}
+		
+		if(hitX == -1)return null;
+		return new int[]{hitX, hitY, hitZ};
+	}
+	
+	private boolean cross(float f,float g,float h, Vec3 st, Vec3 dist)
+	{
+		Vec3 normal = Vec3.createVectorHelper(-dist.yCoord, dist.xCoord, 0);
+		
+		boolean hasPos = false;
+		boolean hasNeg = false;		
+		for(int i = 0; i < 8; i ++)
+		{
+			Vec3 vert = Vec3.createVectorHelper(f + (i&1)/8f , g + ((i&2)>>1)/8f, h + ((i&4)>>2)/8f);
+			vert = vert.subtract(st);
+			
+			if(vert.dotProduct(normal)>0) hasPos = true;
+			else hasNeg = true;
+			
+			if(hasPos && hasNeg)return true;
+		}
+
 		return false;
 	}
 }

@@ -1,7 +1,13 @@
 package hx.MinePainter;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
@@ -33,7 +39,6 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 				}
 		
 		renderer.blockAccess = iba;
-					
 		
 		return false;
 	}
@@ -47,5 +52,4 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 	public int getRenderId() {
 		return ModMinePainter.instance.block("Sculpture").ri();
 	}
-	
 }
