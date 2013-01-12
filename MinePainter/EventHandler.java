@@ -30,7 +30,7 @@ public class EventHandler {
 		int[] pos = tes.rayTrace(event.player.getPosition(1.0f), look);
 		
 		if(pos != null)
-			System.err.println(pos[0] + " " + pos[1] + " " + pos[2]);
+			;
 		else return;
 
 		ModMinePainter.instance.block("Sculpture").block().setBlockBounds(
