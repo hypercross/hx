@@ -53,7 +53,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		y%=8;
 		byte strip = data[x*8+y];
 		
-		strip |= 1 << z;
+		strip |= (1 << z);
 		data[x * 8 + y] = strip;
 	}
 	
@@ -239,7 +239,9 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	
 	private boolean cross(float f,float g,float h, Vec3 st, Vec3 dist)
 	{
-		Vec3 normal = Vec3.createVectorHelper(-dist.yCoord, dist.xCoord, 0);
+		Vec3 normal = dist.crossProduct(Vec3.createVectorHelper(f + 1/16f, g + 1/16f, h + 1/16f).subtract(st))	
+						.crossProduct(dist).normalize();
+				
 		
 		boolean hasPos = false;
 		boolean hasNeg = false;		
