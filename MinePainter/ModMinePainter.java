@@ -37,7 +37,6 @@ public class ModMinePainter extends HyperMod{
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
-        if(FMLCommonHandler.instance().getSide().isClient())
-        	MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 }

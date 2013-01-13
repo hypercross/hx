@@ -8,6 +8,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -19,9 +21,14 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class TileEntitySculpture extends TileEntity implements IBlockAccess{
+	
+	public static TileEntitySculpture full = new TileEntitySculpture();
+	
 	byte[] data = new byte[64];
 	
 	private int biasX,biasY,biasZ;
+	
+	private boolean needUpdate = false;
 	
 	public TileEntitySculpture()
 	{
@@ -55,6 +62,8 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		
 		strip |= (1 << z);
 		data[x * 8 + y] = strip;
+		
+		needUpdate = true;
 	}
 	
 	public void del (int x,int y,int z)
@@ -63,8 +72,19 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		y%=8;
 		byte strip = data[x*8+y];
 		
-		strip ^= (1 << z);
+		strip &= (1 << z) ^ -1;
 		data[x * 8 + y] = strip;
+		
+		needUpdate = true;
+	}
+	
+	public void updateEntity()
+	{
+		if(needUpdate)
+		{
+			needUpdate = false;
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
 	}
 	
 	//TileEntity util
@@ -81,6 +101,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
     {
 		super.readFromNBT(par1NBTTagCompound);
 		data = par1NBTTagCompound.getByteArray("sculpture");
+		needUpdate = true;
     }
 	
 	@Override
@@ -118,7 +139,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public int getBlockId(int var1, int var2, int var3) {
 		return get(var1 - this.xCoord + biasX,
 				   var2 - this.yCoord + biasY,
-				   var3 - this.zCoord + biasZ) ? Block.cobblestone.blockID : 0;
+				   var3 - this.zCoord + biasZ) ? ((BlockSculpture)this.getBlockType()).materialBlock(this.getBlockMetadata()).blockID : 0;
 	}
 
 	@Override
@@ -156,9 +177,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 
 	@Override
 	public boolean isBlockNormalCube(int var1, int var2, int var3) {
-		return get(var1 - this.xCoord + biasX,
-				   var2 - this.yCoord + biasY,
-				   var3 - this.zCoord + biasZ);
+		return false;
 	}
 
 	@Override
@@ -257,5 +276,91 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		}
 
 		return false;
+	}
+	
+	public static int[] selectionBox(int[] selectionPoint, int mode, int axis, int[] minmax)
+	{
+		if(selectionPoint == null)return null;
+		
+		int[] box = new int[]{selectionPoint[0],
+								  selectionPoint[1],
+								  selectionPoint[2],
+								  selectionPoint[0]+1,
+								  selectionPoint[1]+1,
+								  selectionPoint[2]+1};
+		switch(mode)
+		{
+		case 0:
+			return box;
+		case 1:
+			box[axis]=minmax[axis];
+			box[axis+3]=minmax[axis+3];
+			return box;
+		case 2:
+			for(int i =0;i<3;i++)
+				if(i!=axis)
+					{
+					box[i]=minmax[i];
+					box[i+3]=minmax[i+3];
+					}
+			return box;
+		}
+		return null;
+	}
+	
+	public static int getMode(ItemStack is)
+	{
+		if(is == null)return -1;
+		if(is.itemID == Item.pickaxeWood.shiftedIndex)return 0;
+		if(is.itemID == Item.pickaxeStone.shiftedIndex)return 1;
+		if(is.itemID == Item.pickaxeSteel.shiftedIndex)return 2;
+		return -1;
+	}
+	
+	public static int getAxis(Vec3 look)
+	{
+		double[] val = new double[] { Math.abs(look.xCoord),Math.abs(look.yCoord),Math.abs(look.zCoord)};
+		
+		for(int i =0;i<3;i++)
+		{
+			boolean max = true;
+			for(int j =0;j<3;j++)
+				if(val[j]>val[i])max = false;
+			if(max)return i;
+		}
+		return 0;
+	}
+	
+	public void updateBounds(Block block)
+	{
+		int[] minmax = getMinMax();
+		
+		if(minmax[0] < minmax[3])
+			block.setBlockBounds(minmax[0]/8f, minmax[1]/8f, minmax[2]/8f, minmax[3]/8f, minmax[4]/8f, minmax[5]/8f);
+		else block.setBlockBounds(0, 0, 0, 1,1,1);
+	}
+	
+	public int[] getMinMax()
+	{
+		int minX,minY,minZ,maxX,maxY,maxZ;
+		minX=minY=minZ=8;
+		maxX=maxY=maxZ=0;
+		
+		for(int _x = 0;_x<8;_x++)
+			for(int _y = 0;_y<8;_y++)
+				for(int _z = 0;_z<8;_z++)
+					if(get(_x,_y,_z))
+					{
+						minX = Math.min(_x, minX);
+						minY = Math.min(_y, minY);
+						minZ = Math.min(_z, minZ);
+						
+						maxX = Math.max(_x+1, maxX);
+						maxY = Math.max(_y+1, maxY);
+						maxZ = Math.max(_z+1, maxZ);
+						
+					}
+		
+		return new int[]{minX,minY,minZ,maxX,maxY,maxZ};
 	}
 }
