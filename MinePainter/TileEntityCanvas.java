@@ -1,5 +1,6 @@
 package hx.MinePainter;
 
+import hx.utils.Debug;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -27,6 +28,7 @@ public class TileEntityCanvas extends TileEntity{
     @Override
     public Packet getDescriptionPacket()
     {
+    	Debug.dafuq();
         NBTTagCompound tag = new NBTTagCompound();
         this.writeToNBT(tag);
         return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, tag);

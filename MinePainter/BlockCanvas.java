@@ -1,5 +1,7 @@
 package hx.MinePainter;
 
+import hx.utils.Debug;
+
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -118,6 +120,8 @@ public class BlockCanvas extends BlockContainer{
     public boolean onBlockActivated(World w, int x, int y, int z, EntityPlayer ep,
     		int face, float _x, float _y, float _z)
     {
+    	if(w.isRemote)return false;
+    	
     	int code = 0;
     	if(ep.inventory.getCurrentItem() == null)
     		code = 0;
@@ -132,9 +136,14 @@ public class BlockCanvas extends BlockContainer{
     	int index = pixelIndex(_x,_y,_z,meta);
     	
     	TileEntityCanvas tec = (TileEntityCanvas) w.getBlockTileEntity(x, y, z);
-    	tec.image.set(15-index/16, 16-index%16, code);    	
     	
-    	return false;
+    	if(!ep.isWet())
+    		tec.image.set(15-index/16, 16-index%16, code);
+    	else tec.image.clear(code);
+    	
+    	w.markBlockForUpdate(x, y, z);
+    	
+    	return true;
     }
      
     private static ForgeDirection[] xproj=

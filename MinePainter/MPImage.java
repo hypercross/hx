@@ -1,5 +1,7 @@
 package hx.MinePainter;
 
+import hx.utils.Debug;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -14,8 +16,16 @@ public class MPImage {
 	
 	public MPImage()
 	{
-//		for(int i =0;i<256;i++)
-//			pixels[i] = (byte) ( ((i%2) == ((i/16)%2)) ? 1 : 17); 
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(bos);
+		
+		clear((byte) 31);
+	}
+	
+	public void clear(int code)
+	{
+		for(int i =0;i<256;i++)
+			pixels[i] = (byte) code;
 	}
 	
 	public void fromByteArray(byte[] data)
@@ -27,14 +37,20 @@ public class MPImage {
 			for(int i = 0; i<128; i ++)
 			{
 				byte pix = inputStream.readByte();
-				pixels[(i << 1)] = (byte) (pix >> 4); 
+				pixels[(i << 1)] = (byte) ((pix & 255) >> 4); 
 				pixels[(i << 1) + 1] = (byte) (pix & 15);
+			}
+			
+			for(int i = 0; i < 32; i ++)
+			{
+				byte pix = inputStream.readByte();
+				byte index = 1;
 				
-				if(inputStream.readBoolean())
-					pixels[i << 1] |= 16;
-				
-				if(inputStream.readBoolean())
-					pixels[(i << 1) + 1] |= 16;
+				for(int j = 0;j<8;j++)
+				{
+					if((pix & index) != 0)pixels[i*8 + j] |= 16;
+					index = (byte) (index << 1);
+				}
 			}
 			
 		} catch (IOException e) {
@@ -51,13 +67,24 @@ public class MPImage {
 		try {
 			for(int i = 0; i < 128; i ++)
 			{
-				byte b1 = (byte) (pixels[i << 1] << 4);
+				byte b1 = (byte) ((pixels[i << 1] & 15 ) << 4);
 				byte b2 = (byte) (pixels[(i<< 1) + 1] & 15);
-				
 				dos.writeByte(b1 | b2);
-				dos.writeBoolean(pixels[i << 1] > 15);
-				dos.writeBoolean(pixels[(i<< 1) + 1] > 15);
 			}
+			
+			for(int i = 0; i < 32; i ++)
+			{
+				byte pix = 0;
+				byte index = 1;
+				
+				for(int j =0;j<8;j++)
+				{
+					if(pixels[i*8 + j] > 15)pix |= index;
+					index = (byte)(index << 1);
+				}
+				dos.writeByte(pix);
+			}
+			
 		} catch (IOException e) {
 		}
 		

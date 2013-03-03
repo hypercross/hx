@@ -19,4 +19,16 @@ public class Debug {
 		}
 		System.err.println(obj);
 	}
+	
+	public static void dafuq(byte[] bal)
+	{
+		System.err.print("[");
+		
+		for(Object blah : bal)
+		{
+			System.err.print(blah + ",");
+		}
+		
+		System.err.println("]");
+	}
 }

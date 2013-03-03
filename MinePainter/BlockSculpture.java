@@ -3,11 +3,13 @@ package hx.MinePainter;
 import hx.utils.Debug;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +27,13 @@ public class BlockSculpture extends BlockContainer{
 		setBlockName("blockSculpture");
 		setCreativeTab(CreativeTabs.tabDecorations);
 		this.setRequiresSelfNotify();
+		this.setHardness(10f);
 	}
+	
+	public float getBlockHardness(World par1World, int par2, int par3, int par4)
+    {
+        return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].getBlockHardness(par1World, par2, par3, par4);
+    }
 	
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
     {
@@ -33,22 +41,35 @@ public class BlockSculpture extends BlockContainer{
 		tes.updateBounds(this);
         return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
     }
+	
+	public int idDropped(int par1, Random par2Random, int par3)
+	{
+		return materialBlock[par1].blockID;
+	}
 
-//	public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
-//	{
-//		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
-//		
-//		for(int _x = 0;_x<8;_x++)
-//			for(int _y = 0;_y<8;_y++)
-//				for(int _z = 0;_z<8;_z++)
-//				{
-//					if(tes.get(_x, _y, _z))
-//					{
-//						setSubblockCollision(par2,par3,par4,_x,_y,_z);
-//						super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
-//					}
-//				}
-//	}
+	public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+	{
+		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
+		
+		for(int _x = 0;_x<8;_x++)
+			for(int _y = 0;_y<8;_y++)
+				for(int _z = 0;_z<8;_z++)
+				{
+					if(tes.get(_x, _y, _z))
+					{
+						setBlockBounds( _x * 0.125f, _y * 0.125f, _z * 0.125f,
+								(_x+1) * 0.125f, (_y+1) * 0.125f, (_z+1) * 0.125f);
+
+						AxisAlignedBB var8 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
+
+				        if (var8 != null && par5AxisAlignedBB.intersectsWith(var8))
+				        {
+				            par6List.add(var8);
+				        }
+					}
+				}
+		tes.updateBounds(this);
+	}
 	
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
@@ -103,6 +124,8 @@ public class BlockSculpture extends BlockContainer{
 						tes.del(x, y, z);
 		}
 		else return false;
+		
+//		par1World.notifyBlockChange(par2, par3, par4, this.blockID);
 		
 		return true;
 	}
