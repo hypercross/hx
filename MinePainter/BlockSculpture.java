@@ -57,8 +57,8 @@ public class BlockSculpture extends BlockContainer{
 				{
 					if(tes.get(_x, _y, _z))
 					{
-						setBlockBounds( _x * 0.125f, _y * 0.125f, _z * 0.125f,
-								(_x+1) * 0.125f, (_y+1) * 0.125f, (_z+1) * 0.125f);
+						setBlockBounds( _x/4 * 0.50f, _y/4 * 0.50f, _z/4 * 0.5f,
+								(_x/4 +1) * 0.5f, (_y/4 +1) * 0.5f, (_z/4 +1) * 0.5f);
 
 						AxisAlignedBB var8 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
 
@@ -66,6 +66,10 @@ public class BlockSculpture extends BlockContainer{
 				        {
 				            par6List.add(var8);
 				        }
+				        
+				        _x = _x/4*4 + 3;
+				        _y = _y/4*4 + 3;
+				        _z = _z/4*4 + 3;
 					}
 				}
 		tes.updateBounds(this);
