@@ -27,7 +27,7 @@ public class HyperMod
     private TreeMap<String, BlockLoader> blockLoaders = new TreeMap<String, BlockLoader>();
     private TreeMap<String, ItemLoader> itemLoaders = new TreeMap<String, ItemLoader>();
 
-    public void addBlocks(String[] names)
+    public void addBlocks(String... names)
     {
         for (String name : names)
         {
@@ -45,7 +45,7 @@ public class HyperMod
         return itemLoaders.get(name);
     }
 
-    public void addItems(String[] items)
+    public void addItems(String... items)
     {
         for (String name : items)
         {

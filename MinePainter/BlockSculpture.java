@@ -34,6 +34,22 @@ public class BlockSculpture extends BlockContainer{
         return AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
     }
 
+//	public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+//	{
+//		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
+//		
+//		for(int _x = 0;_x<8;_x++)
+//			for(int _y = 0;_y<8;_y++)
+//				for(int _z = 0;_z<8;_z++)
+//				{
+//					if(tes.get(_x, _y, _z))
+//					{
+//						setSubblockCollision(par2,par3,par4,_x,_y,_z);
+//						super.addCollidingBlockToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
+//					}
+//				}
+//	}
+	
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileEntitySculpture();
