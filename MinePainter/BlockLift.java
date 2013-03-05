@@ -85,7 +85,6 @@ public class BlockLift extends Block{
 
 	public void onBlockEventReceived(World par1World, int par2, int par3, int par4, int par5, int par6)
 	{
-		System.out.println("blah");
 		int x = par2 + Facing.offsetsXForSide[par6 & 7];
 		int y = par3 + Facing.offsetsYForSide[par6 & 7] - 1;
 		int z = par4 + Facing.offsetsZForSide[par6 & 7];

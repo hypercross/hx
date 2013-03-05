@@ -132,6 +132,9 @@ public class BlockCanvas extends BlockContainer{
     	else if(ep.getCurrentEquippedItem().itemID == Item.dyePowder.shiftedIndex)
     	{
     		code = ep.getCurrentEquippedItem().getItemDamage() | 16;
+    	}else if(ep.getCurrentEquippedItem().itemID == Item.slimeBall.shiftedIndex)
+    	{
+    		code = -1;
     	}else return false;
     	
     	float px,py;
@@ -141,9 +144,11 @@ public class BlockCanvas extends BlockContainer{
     	
     	TileEntityCanvas tec = (TileEntityCanvas) w.getBlockTileEntity(x, y, z);
     	
-    	if(!ep.isWet())
+    	if(code == -1)
+    		tec.image.fill(0);
+    	else if(!ep.isWet())
     		tec.image.set(15-index/16, 16-index%16, code);
-    	else tec.image.clear(code);
+    	else tec.image.flood(15-index/16, 16-index%16, -1, code);
     	
     	w.markBlockForUpdate(x, y, z);
     	

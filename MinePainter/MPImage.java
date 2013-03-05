@@ -19,13 +19,27 @@ public class MPImage {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		
-		clear((byte) 31);
+		fill((byte) 31);
 	}
 	
-	public void clear(int code)
+	public void fill(int code)
 	{
 		for(int i =0;i<256;i++)
 			pixels[i] = (byte) code;
+	}
+	
+	public void flood(int x,int y,int before, int after)
+	{
+		if(x<0 || y<0 || x>15 || y>15)return;
+		if(before == -1)before = at(x,y);
+		
+		if(at(x,y)==before)set(x,y,after);
+		else return;
+		
+		flood(x-1,y,before,after);
+		flood(x+1,y,before,after);
+		flood(x,y-1,before,after);
+		flood(x,y+1,before,after);
 	}
 	
 	public void fromByteArray(byte[] data)

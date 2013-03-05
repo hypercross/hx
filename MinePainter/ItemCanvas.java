@@ -23,7 +23,7 @@ public class ItemCanvas extends Item{
 	@SideOnly(Side.CLIENT)
     public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
     {
-        return 0xff00ff;
+        return 0xFFCCCC;
     }
 	
 	private int getMeta(EntityPlayer ep, int face)
