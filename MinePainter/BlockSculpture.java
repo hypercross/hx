@@ -23,7 +23,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class BlockSculpture extends BlockContainer{
 	
-	private Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
+	public static Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
 									Block.planks, Block.brick, Block.glass, Block.ice, Block.glowStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
 	
 	public boolean onSelect = false;
@@ -243,6 +243,7 @@ public class BlockSculpture extends BlockContainer{
 	{
 		ItemStack is = new ItemStack(ModMinePainter.instance.item(name).item());
 		is.stackSize = count;
+		is.setItemDamage(w.getBlockMetadata(x, y, z));
 		EntityItem entity = new EntityItem(w, x,y,z, is);
 		entity.delayBeforeCanPickup = 10;
 		w.spawnEntityInWorld(entity);

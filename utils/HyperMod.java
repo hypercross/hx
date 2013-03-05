@@ -128,6 +128,10 @@ public class HyperMod
         {
             bl.registerRenderers();
         }
+    	for (ItemLoader il : itemLoaders.values())
+    	{
+    		il.registerRenderer();
+    	}
     	MinecraftForgeClient.preloadTexture(this.MAIN_TEXTURE);
     }
 

@@ -2,10 +2,13 @@ package hx.utils;
 
 import java.util.HashMap;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 import net.minecraft.item.Item;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 public class ItemLoader
 {
@@ -66,4 +69,16 @@ public class ItemLoader
             FMLLog.getLogger().severe("Item " + name + " class NOT FOUND!");
         }
     }
+
+	public void registerRenderer() {
+		if(FMLCommonHandler.instance().getSide().isServer())return;
+		
+		try{
+			Class itemRender = Class.forName(mod.getClass().getPackage().getName() + "." + "Item" + name + "Renderer");
+			MinecraftForgeClient.registerItemRenderer(this.item().shiftedIndex, (IItemRenderer) itemRender.newInstance());
+		}catch(Exception e)
+		{
+			FMLLog.getLogger().fine("item renderer skipped for " + name);
+		}
+	}
 }
