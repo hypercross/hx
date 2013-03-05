@@ -79,7 +79,7 @@ public class BlockSculpture extends BlockContainer{
 	
 	public int idPicked(World par1World, int par2, int par3, int par4)
 	{
-		return materialBlock[par1World.getBlockId(par2, par3, par4)].blockID;
+		return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].blockID;
 	}
 
 	public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
