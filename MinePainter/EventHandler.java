@@ -31,6 +31,8 @@ public class EventHandler {
 		BlockSculpture sculpture = (BlockSculpture) ModMinePainter.instance.block("Sculpture").block();
 		int materialID  = event.entity.worldObj.getBlockId(event.x,event.y,event.z);
 		
+		BlockSculpture.createEmpty = false;
+		
 		for(int i =0;i<16;i++)
 			if(sculpture.materialBlock(i).blockID == materialID)
 			{
@@ -46,6 +48,8 @@ public class EventHandler {
 				event.target.blockY, event.target.blockZ) ;
 		
 		BlockSculpture sculpture = (BlockSculpture) ModMinePainter.instance.block("Sculpture").block();
+		
+		if(TileEntitySculpture.getMode(event.player.getCurrentEquippedItem()) == -1)return;
 		
 		boolean valid = false;
 		if(blockID == ModMinePainter.instance.block("Sculpture").blockID)valid = true;
@@ -76,9 +80,7 @@ public class EventHandler {
 		
 		if(tes != TileEntitySculpture.full)
 		{
-			if(pos == null)
-				tes.updateBounds(sculpture);
-			else
+			if(pos != null)
 				sculpture.setBlockBounds(
 						pos[0]/8f,
 						pos[1]/8f,
@@ -87,9 +89,10 @@ public class EventHandler {
 						pos[4]/8f,
 						pos[5]/8f);
 
+			sculpture.onSelect = true;
 			event.context.drawSelectionBox(event.player, event.target, 0, null, event.partialTicks);
-
-			tes.updateBounds(sculpture);
+			sculpture.onSelect = false;
+			
 		}else if(pos != null)
 		{
 			double[] bounds = new double[]{
@@ -117,44 +120,4 @@ public class EventHandler {
 		
 		event.setCanceled(true);
 	}
-	
-	private void drawOutlinedBoundingBox(AxisAlignedBB par1AxisAlignedBB)
-    {	
-		GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(1.0F, 0.0F, 0.0F, 0.4F);
-        GL11.glLineWidth(2.0F);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDepthMask(false);
-		
-        Tessellator var2 = Tessellator.instance;
-        var2.startDrawing(3);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.minY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.minY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.minY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.minY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.minY, par1AxisAlignedBB.minZ);
-        var2.draw();
-        var2.startDrawing(3);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.minZ);
-        var2.draw();
-        var2.startDrawing(1);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.minY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.minY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.minZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.minY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.maxX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.minY, par1AxisAlignedBB.maxZ);
-        var2.addVertex(par1AxisAlignedBB.minX, par1AxisAlignedBB.maxY, par1AxisAlignedBB.maxZ);
-        var2.draw();
-        
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-    }
 }

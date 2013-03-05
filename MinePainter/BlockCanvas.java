@@ -22,8 +22,7 @@ public class BlockCanvas extends BlockContainer{
 	public BlockCanvas(int id){
 		super(id, Material.cloth);
 		setRequiresSelfNotify();
-		setBlockName("blockCanvas");
-		
+		setBlockName("blockCanvas");		
 	}
 
 	@Override
@@ -86,7 +85,12 @@ public class BlockCanvas extends BlockContainer{
 
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return 0;
+    	return ModMinePainter.instance.item("Canvas").item().shiftedIndex;
+    }
+    
+    public int idPicked(World par1World, int par2, int par3, int par4)
+    {
+        return ModMinePainter.instance.item("Canvas").item().shiftedIndex;
     }
     
     @Override
@@ -181,7 +185,7 @@ public class BlockCanvas extends BlockContainer{
     	ForgeDirection.WEST,
     	
     	};
-
+   
     private int pixelIndex(float x,float y,float z,int face)
     {
     	ForgeDirection xdir = xproj[face];

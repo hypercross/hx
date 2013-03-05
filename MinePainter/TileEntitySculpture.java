@@ -1,5 +1,7 @@
 package hx.MinePainter;
 
+import hx.utils.Debug;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -15,6 +17,7 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Facing;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3Pool;
 import net.minecraft.world.IBlockAccess;
@@ -25,17 +28,19 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static TileEntitySculpture full = new TileEntitySculpture();
 	
 	byte[] data = new byte[64];
+	byte[] ao   = new byte[2048];
 	
-	private int biasX,biasY,biasZ;
+	public int biasX,biasY,biasZ;
 	
-	private boolean needUpdate = false;
+	private boolean needUpdate = true;
 	
 	public TileEntitySculpture()
 	{
-		Arrays.fill(data,(byte)-1);
+		if(BlockSculpture.createEmpty)clear();
+		else fill();
 	}
 	
-	private boolean invalid(int x,int y,int z)
+	public boolean invalid(int x,int y,int z)
 	{
 		if(x>=8)return true;
 		if(x<0)return true;
@@ -56,14 +61,21 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	
 	public void set (int x,int y,int z)
 	{
-		x%=8;
-		y%=8;
+		x = normalize(x);
+		y = normalize(y);
+		z = normalize(z);
 		byte strip = data[x*8+y];
 		
 		strip |= (1 << z);
 		data[x * 8 + y] = strip;
 		
 		needUpdate = true;
+	}
+	
+	private int normalize(int x)
+	{
+		while(x<0)x+=8;
+		return x % 8;
 	}
 	
 	public void del (int x,int y,int z)
@@ -76,6 +88,12 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		data[x * 8 + y] = strip;
 		
 		needUpdate = true;
+	}
+	
+	public void toggle(int x,int y,int z)
+	{
+		if(get(x,y,z))del(x,y,z);
+		else set(x,y,z);
 	}
 	
 	public void updateEntity()
@@ -130,6 +148,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean isBlockOpaqueCube(int var1, int var2, int var3) {
+//		return worldObj.isBlockOpaqueCube(var1, var2, var3);
 		return get(var1 - this.xCoord + biasX,
 				   var2 - this.yCoord + biasY,
 				   var3 - this.zCoord + biasZ);
@@ -167,7 +186,9 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 
 	@Override
 	public int getBlockMetadata(int var1, int var2, int var3) {
-		return 0;
+		return get(var1 - this.xCoord + biasX,
+				   var2 - this.yCoord + biasY,
+				   var3 - this.zCoord + biasZ) ? this.getBlockMetadata() : 0;
 	}
 
 	@Override
@@ -177,6 +198,13 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 
 	@Override
 	public boolean isBlockNormalCube(int var1, int var2, int var3) {
+		
+		int x = var1 - this.xCoord + biasX;
+		int y = var2 - this.yCoord + biasY;
+		int z = var3 - this.zCoord + biasZ;
+		
+		if(get(x,y,z))return true;
+		if(invalid(x,y,z))return false; //return worldObj.isBlockNormalCube(var1, var2, var3);
 		return false;
 	}
 
@@ -253,7 +281,43 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 				}
 		
 		if(hitX == -1)return null;
-		return new int[]{hitX, hitY, hitZ};
+		int face = face(start,dist,new int[]{hitX, hitY, hitZ});
+		return new int[]{hitX, hitY, hitZ, face};
+	}
+	
+	public int face(Vec3 start, Vec3 dist, int[] pos)
+	{
+		Vec3 end = dist.addVector(start.xCoord,start.yCoord,start.zCoord);
+		
+		double dx = xCoord + pos[0]/8f + (dist.xCoord > 0 ? 0 : .125f);   
+		double dy = yCoord + pos[1]/8f + (dist.yCoord > 0 ? 0 : .125f);
+		double dz = zCoord + pos[2]/8f + (dist.zCoord > 0 ? 0 : .125f);
+		
+		int face = -1;
+		double len = 0;
+		
+		Vec3 to_face = start.getIntermediateWithXValue(end, dx); 
+		if(to_face != null && to_face.squareDistanceTo(start) > len)
+		{
+			face = dist.xCoord > 0 ? 4 : 5;
+			len = to_face.squareDistanceTo(start);
+		}
+		
+		to_face = start.getIntermediateWithYValue(end, dy);
+		if(to_face != null && to_face.squareDistanceTo(start) > len)
+		{
+			face = dist.yCoord > 0 ? 0 : 1;
+			len = to_face.squareDistanceTo(start);
+		}
+		
+		to_face = start.getIntermediateWithZValue(end, dz);
+		if(to_face != null && to_face.squareDistanceTo(start) > len)
+		{
+			face = dist.zCoord > 0 ? 2 : 3;
+			len = to_face.squareDistanceTo(start);
+		}			
+		
+		return face;
 	}
 	
 	private boolean cross(float f,float g,float h, Vec3 st, Vec3 dist)
@@ -288,6 +352,14 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 								  selectionPoint[0]+1,
 								  selectionPoint[1]+1,
 								  selectionPoint[2]+1};
+		
+		if(mode > 2)
+		{
+			mode -= 3;
+			shift(box,selectionPoint[3]);
+			minmax[0]=minmax[1]=minmax[2]=0;
+			minmax[3]=minmax[4]=minmax[5]=8;
+		}
 		switch(mode)
 		{
 		case 0:
@@ -308,12 +380,33 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		return null;
 	}
 	
+	private static void shift(int[] box, int face)
+	{
+		if(face != cap(0,face,5))return;
+		box[0] += Facing.offsetsXForSide[face];
+		box[1] += Facing.offsetsYForSide[face];
+		box[2] += Facing.offsetsZForSide[face];
+		box[3] += Facing.offsetsXForSide[face];
+		box[4] += Facing.offsetsYForSide[face];
+		box[5] += Facing.offsetsZForSide[face];
+	}
+	
+	public static int cap(int a,int b,int c)
+	{
+		if(a>b)return a;
+		if(b>c)return c;
+		return b;
+	}
+	
 	public static int getMode(ItemStack is)
 	{
 		if(is == null)return -1;
 		if(is.itemID == Item.pickaxeWood.shiftedIndex)return 0;
 		if(is.itemID == Item.pickaxeStone.shiftedIndex)return 1;
 		if(is.itemID == Item.pickaxeSteel.shiftedIndex)return 2;
+		if(is.itemID == ModMinePainter.instance.item("SculpturePiece").item().shiftedIndex)return 3;
+		if(is.itemID == ModMinePainter.instance.item("SculptureBar").item().shiftedIndex)return 4;
+		if(is.itemID == ModMinePainter.instance.item("SculptureCover").item().shiftedIndex)return 5;
 		return -1;
 	}
 	
@@ -362,5 +455,46 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 					}
 		
 		return new int[]{minX,minY,minZ,maxX,maxY,maxZ};
+	}
+	
+	//ao
+	
+	public void calculateAO()
+	{
+		
+	}
+	
+	public void setAO(int x,int y,int z,int l)
+	{
+		x %= 16;
+		y %= 16;
+		z %= 16;
+		
+		byte b = ao[x*128 + y*8 + z/2];
+	}
+	
+	public int getAO(int x,int y,int z)
+	{
+		x %= 16;
+		y %= 16;
+		z %= 16;
+		
+		byte b = ao[x*128 + y*8 + z/2];
+		return (z%2 == 1) ? b & 15 : (b & 255) >> 4; 
+	}
+
+	public void clear() {
+		Arrays.fill(data, (byte)0);
+	}
+	
+	public void fill()
+	{
+		Arrays.fill(data, (byte)-1);
+	}
+
+	public boolean isEmpty() {
+		for(int i =0;i<data.length;i++)
+			if(data[i] != 0)return false;
+		return true;
 	}
 }

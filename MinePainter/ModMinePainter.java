@@ -1,11 +1,13 @@
 package hx.MinePainter;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import hx.utils.HyperMod;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -21,7 +23,7 @@ public class ModMinePainter extends HyperMod{
 		this.ITEM_BASE_ID  = 9700;
 		this.MAIN_TEXTURE = "/hx/MinePainter/img.png";
 		addBlocks("Canvas", "Sculpture", "Lift");
-		addItems(new String[]{"Canvas"});
+		addItems("Canvas","SculpturePiece", "SculptureCover", "SculptureBar");
 	}
 	
 	@Instance("mod_MinePainter")
@@ -37,6 +39,13 @@ public class ModMinePainter extends HyperMod{
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
+        GameRegistry.addRecipe(new ItemStack(item("SculptureBar").item()),
+        		"XXX","X X","XXX",
+        		'X',new ItemStack(item("SculpturePiece").item()));
+        GameRegistry.addRecipe(new ItemStack(item("SculptureCover").item()),
+        		"XXX","X X","XXX",
+        		'X',new ItemStack(item("SculptureBar").item()));
+        
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 }

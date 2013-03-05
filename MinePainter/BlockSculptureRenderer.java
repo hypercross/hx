@@ -40,7 +40,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 					
 					tes.bias(_x, _y, _z);
 					renderer.setRenderMinMax(_x/8f, _y/8f, _z/8f, (_x+1)/8f, (_y+1)/8f, (_z+1)/8f);
-					renderer.renderStandardBlock( sculpture.materialBlock(tes.getBlockMetadata()) , x, y, z);
+					renderer.renderStandardBlock( sculpture , x, y, z);
 				}
 		
 		renderer.blockAccess = iba;
