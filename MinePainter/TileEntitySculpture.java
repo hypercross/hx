@@ -29,11 +29,11 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static TileEntitySculpture full = new TileEntitySculpture();
 	
 	byte[] data = new byte[64];
-	byte[] lighting = new byte[512];
+	public int blockMeta;
 	
 	public int biasX,biasY,biasZ;
 	
-	private boolean needUpdate = true;
+	public boolean needUpdate = true;
 	
 	public TileEntitySculpture()
 	{
@@ -113,6 +113,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
     {
 		super.writeToNBT(par1NBTTagCompound);
 		par1NBTTagCompound.setByteArray("sculpture", data);
+		par1NBTTagCompound.setInteger("meta", blockMeta);
     }
 	
 	@Override
@@ -120,6 +121,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
     {
 		super.readFromNBT(par1NBTTagCompound);
 		data = par1NBTTagCompound.getByteArray("sculpture");
+		blockMeta = par1NBTTagCompound.getInteger("meta");
 		needUpdate = true;
     }
 	

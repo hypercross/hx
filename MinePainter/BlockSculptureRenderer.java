@@ -39,6 +39,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 		renderer.blockAccess = tes;
 		renderer.setRenderBounds(0,0,0,1,1,1);
 		BlockSculpture sculpture = (BlockSculpture) block;
+		BlockSculpture.renderBlockMeta = tes.blockMeta;
 		
 		blockCoord(x,y,z);
 		
@@ -93,11 +94,6 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 			if(v>vmax)vmax = v;
 			if(v<vmin)vmin = v;
 		}
-		
-		Debug.dafuq(umin + " and " + umax);
-		Debug.dafuq(vmin + " and " + vmax);
-		Debug.dafuq();
-		
 		
 		float uWidth = umax -umin;
 		float vWidth = vmax-vmin;

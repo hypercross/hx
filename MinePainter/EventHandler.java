@@ -36,6 +36,7 @@ public class EventHandler {
 		if(mode < 3)
 		{
 			int materialID  = event.entity.worldObj.getBlockId(event.x,event.y,event.z);
+			int meta        = event.entity.worldObj.getBlockMetadata(event.x,event.y,event.z);
 			
 			BlockSculpture.createEmpty = false;
 			
@@ -43,6 +44,9 @@ public class EventHandler {
 				if(sculpture.materialBlock(i).blockID == materialID)
 				{
 					event.entity.worldObj.setBlockAndMetadataWithNotify(event.x, event.y, event.z, sculpture.blockID, i, 3);
+					TileEntitySculpture tes = (TileEntitySculpture) event.entity.worldObj.getBlockTileEntity(event.x,event.y,event.z);
+					tes.blockMeta = meta;
+					tes.needUpdate = true;
 					return;
 				}
 		}else if(event.entity.worldObj.getBlockId(event.x, event.y, event.z) != sculpture.blockID){
@@ -69,7 +73,7 @@ public class EventHandler {
 		if(mode == -1)return;
 		
 		boolean valid = false;
-		if(blockID == ModMinePainter.instance.block("Sculpture").blockID)valid = true;
+		if(blockID == sculpture.blockID)valid = true;
 		else for(int i =0;i<16;i++)
 			if(sculpture.materialBlock(i).blockID == blockID)
 			{
@@ -78,6 +82,10 @@ public class EventHandler {
 			}
 		
 		if(mode < 3 && !valid)return;
+		if(blockID != sculpture.blockID && event.player.worldObj.blockHasTileEntity(
+				event.target.blockX,
+				event.target.blockY, 
+				event.target.blockZ))return;
 		
 		TileEntitySculpture tes = (TileEntitySculpture) 
 				event.player.worldObj.getBlockTileEntity(

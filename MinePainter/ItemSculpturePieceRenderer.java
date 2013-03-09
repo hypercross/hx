@@ -38,11 +38,13 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 		
 		renderItem.setRenderManager(RenderManager.instance);
+		int id = item.getItemDamage() & 15;
+		int meta = item.getItemDamage() >> 4;
 		
-		ItemStack is = new ItemStack(BlockSculpture.materialBlock[item.getItemDamage()]);
+		ItemStack is = new ItemStack(BlockSculpture.materialBlock[id], 1 , meta);
 		RenderBlocks rb = (RenderBlocks) (data[0]);
 	
-		BlockSculpture.materialBlock[item.getItemDamage()].setBlockBounds(minmax[0]/8f,minmax[1]/8f,minmax[2]/8f,
+		BlockSculpture.materialBlock[id].setBlockBounds(minmax[0]/8f,minmax[1]/8f,minmax[2]/8f,
 																			minmax[3]/8f,minmax[4]/8f,minmax[5]/8f);
 		
 		if(type == ItemRenderType.INVENTORY)
@@ -64,7 +66,7 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 					is, 0);
 		}
 		
-		BlockSculpture.materialBlock[item.getItemDamage()].setBlockBounds(0,0,0,1,1,1);
+		BlockSculpture.materialBlock[id].setBlockBounds(0,0,0,1,1,1);
 	}
 
 }

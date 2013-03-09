@@ -25,10 +25,11 @@ import net.minecraftforge.common.ForgeDirection;
 public class BlockSculpture extends BlockContainer{
 	
 	public static Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
-									Block.planks, Block.brick, Block.glass, Block.ice, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
+									Block.planks, Block.brick, Block.cloth, Block.ice, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
 	
 	public boolean onSelect = false;
 	public static boolean createEmpty = false;
+	public static int renderBlockMeta = 0;
 
 	public BlockSculpture(int id) {
 		super(id, Material.rock);
@@ -46,7 +47,7 @@ public class BlockSculpture extends BlockContainer{
 	
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
 	{
-		return materialBlock[par2].getBlockTextureFromSide(par1);
+		return materialBlock[par2].getBlockTextureFromSideAndMetadata(par1,renderBlockMeta);
 	}
 	
 	public float getBlockHardness(World par1World, int par2, int par3, int par4)
@@ -97,7 +98,7 @@ public class BlockSculpture extends BlockContainer{
     	
     	if(modCount >= 512)
     	{
-    		ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()));
+    		ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()), 1, tes.blockMeta);
     		EntityItem entity = new EntityItem(par1World,par2,par3,par4,is);
     		entity.delayBeforeCanPickup = 10;
     		par1World.spawnEntityInWorld(entity);
@@ -115,7 +116,9 @@ public class BlockSculpture extends BlockContainer{
 			modCount %= 8;
 		}
 		if(modCount > 0)
-			dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");		
+			dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");
+		
+		super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
 	
 	public int idPicked(World par1World, int par2, int par3, int par4)
@@ -181,11 +184,6 @@ public class BlockSculpture extends BlockContainer{
 		return false;
 	}
 	
-	public int idDropped(int par1)
-    {
-        return materialBlock[par1].blockID;
-    }
-	
 	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
     {
 //        for (int var4 = 0; var4 < 16; ++var4)
@@ -198,6 +196,9 @@ public class BlockSculpture extends BlockContainer{
 	{
 		if(par1World.isRemote)
 			return false;
+		
+		if(this.blockID != par1World.getBlockId(par2, par3, par4))
+				if(par1World.blockHasTileEntity(par2, par3, par4))return false;
 		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
 		
 		if(tes == null)
@@ -207,13 +208,18 @@ public class BlockSculpture extends BlockContainer{
 			tes.yCoord = par3;
 			tes.zCoord = par4;
 			tes.worldObj = par1World;
-			tes.blockMetadata = player.getCurrentEquippedItem().getItemDamage();
+			tes.blockMetadata = player.getCurrentEquippedItem().getItemDamage() >> 4;
 		}
+		
 		
 		Vec3 look = player.getLookVec();
 		look = look.addVector(look.xCoord * 4, look.yCoord * 4, look.zCoord * 4);
 		int[] pos = tes.rayTrace(player.getPosition(1f).addVector(0, player.getEyeHeight(), 0),look);
 		int mode = tes.getMode(player.getCurrentEquippedItem());
+		if(mode == -1)return false;
+
+		int id_inhand = player.getCurrentEquippedItem().getItemDamage() & 15;
+		int meta_inhand = player.getCurrentEquippedItem().getItemDamage() >> 4;
 		int face = 0;
 		if(pos != null)face = pos[3];
 		pos = tes.selectionBox(pos, mode, tes.getAxis(look), tes.getMinMax());
@@ -243,18 +249,20 @@ public class BlockSculpture extends BlockContainer{
 								
 								if(par1World.isAirBlock(ox, oy, oz))
 								{
-									createEmpty = true;
-									par1World.setBlockAndMetadataWithNotify( ox,oy,oz, this.blockID, player.getCurrentEquippedItem().getItemDamage(), 2);
+									createEmpty = true; 
+									par1World.setBlockAndMetadataWithNotify( ox,oy,oz, this.blockID, id_inhand, 2);
 									TileEntitySculpture another = (TileEntitySculpture) par1World.getBlockTileEntity(ox,oy,oz);
 									another.clear();
+									another.blockMeta = meta_inhand;
+									another.needUpdate = true;
 								}
 								if(par1World.getBlockId(ox,oy,oz) != this.blockID)continue;
-								if(par1World.getBlockMetadata(ox, oy, oz)!= player.getCurrentEquippedItem().getItemDamage())continue;
+								if(par1World.getBlockMetadata(ox, oy, oz)!= id_inhand)continue;
 								
 								TileEntitySculpture another = (TileEntitySculpture) par1World.getBlockTileEntity(ox,oy,oz);
 								another.set(x , y , z );
 								modCount++;
-							}else if(player.getCurrentEquippedItem().getItemDamage() == tes.getBlockMetadata()){
+							}else if(id_inhand == tes.getBlockMetadata()){
 								tes.set(x, y, z);
 								modCount++;
 							}
@@ -277,7 +285,11 @@ public class BlockSculpture extends BlockContainer{
 			if(modCount > 0)
 				dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");			
 			
-			if(tes.isEmpty())par1World.setBlockAndMetadataWithNotify(par2, par3, par4, 0,0,3);
+			if(tes.isEmpty())
+				{
+					par1World.setBlockAndMetadataWithNotify(par2, par3, par4, 0,0,3);
+					par1World.setBlockTileEntity(par2, par3, par4, null);
+				}
 		}else if(modCount > 0)
 			player.getCurrentEquippedItem().stackSize--;
 
@@ -288,9 +300,10 @@ public class BlockSculpture extends BlockContainer{
 	
 	private void dropScrap(World w, int x,int y,int z, int count, String name)
 	{
+		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y, z);
 		ItemStack is = new ItemStack(ModMinePainter.instance.item(name).item());
 		is.stackSize = count;
-		is.setItemDamage(w.getBlockMetadata(x, y, z));
+		is.setItemDamage(w.getBlockMetadata(x, y, z) + (tes.blockMeta << 4));
 		EntityItem entity = new EntityItem(w, x,y,z, is);
 		entity.delayBeforeCanPickup = 10;
 		w.spawnEntityInWorld(entity);

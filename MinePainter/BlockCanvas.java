@@ -7,10 +7,12 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -28,6 +30,16 @@ public class BlockCanvas extends BlockContainer{
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileEntityCanvas();
 	}
+	
+	public void func_94332_a(IconRegister par1IconRegister)
+    {
+        this.field_94336_cN = par1IconRegister.func_94245_a("cloth");
+    }
+	
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
+    {
+        return Block.cloth.getBlockTextureFromSideAndMetadata(par1, 0);
+    }
 
 	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
