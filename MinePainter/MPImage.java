@@ -123,6 +123,8 @@ public class MPImage {
 	
 	public void set(int x,int y, int color)
 	{
+		while(x<0)x+=16;
+		while(y<0)y+=16;
 		x %= 16;
 		y %= 16;
 		

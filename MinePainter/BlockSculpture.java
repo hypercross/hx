@@ -24,7 +24,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class BlockSculpture extends BlockContainer{
 	
 	public static Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
-									Block.planks, Block.brick, Block.glass, Block.ice, Block.glowStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
+									Block.planks, Block.brick, Block.glass, Block.ice, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
 	
 	public boolean onSelect = false;
 	public static boolean createEmpty = false;
@@ -37,6 +37,12 @@ public class BlockSculpture extends BlockContainer{
 		this.setHardness(10f);
 	}
 	
+	public boolean shouldSideBeRendered(IBlockAccess iba, int par2, int par3, int par4, int par5)
+    {
+		if(iba instanceof TileEntitySculpture)return !((TileEntitySculpture) iba).get(par2, par3, par4);
+        return !iba.isBlockOpaqueCube(par2, par3, par4);
+    }
+	
 	public int getBlockTextureFromSideAndMetadata(int par1, int par2)
 	{
 		return materialBlock[par2].getBlockTextureFromSide(par1);
@@ -47,10 +53,10 @@ public class BlockSculpture extends BlockContainer{
         return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].getBlockHardness(par1World, par2, par3, par4);
     }
 	
-	public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return 1.0F;
-    }
+//	public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
+//    {
+//        return 1.0F;
+//    }
 	
 	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
 	{
@@ -74,8 +80,42 @@ public class BlockSculpture extends BlockContainer{
 	
 	public int idDropped(int par1, Random par2Random, int par3)
 	{
-		return materialBlock[par1].blockID;
+		return 0;
 	}
+	
+    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+    {
+    	TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
+    	
+    	int modCount = 0;
+    	
+    	for(int _x = 0;_x<8;_x++)
+			for(int _y = 0;_y<8;_y++)
+				for(int _z = 0;_z<8;_z++)
+					if(tes.get(_x, _y, _z))modCount++;
+    	
+    	if(modCount >= 512)
+    	{
+    		ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()));
+    		EntityItem entity = new EntityItem(par1World,par2,par3,par4,is);
+    		entity.delayBeforeCanPickup = 10;
+    		par1World.spawnEntityInWorld(entity);
+    		modCount %= 512;
+    	}
+    	
+    	if(modCount >= 64)
+		{
+			dropScrap(par1World,par2,par3,par4,modCount/64,"SculptureCover");
+			modCount %= 64;
+		}
+		if(modCount >= 8)
+		{
+			dropScrap(par1World,par2,par3,par4,modCount/8,"SculptureBar");
+			modCount %= 8;
+		}
+		if(modCount > 0)
+			dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");		
+    }
 	
 	public int idPicked(World par1World, int par2, int par3, int par4)
 	{
@@ -164,6 +204,16 @@ public class BlockSculpture extends BlockContainer{
 			return false;
 		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
 		
+		if(tes == null)
+		{
+			tes = TileEntitySculpture.full;
+			tes.xCoord = par2;
+			tes.yCoord = par3;
+			tes.zCoord = par4;
+			tes.worldObj = par1World;
+			tes.blockMetadata = player.getCurrentEquippedItem().getItemDamage();
+		}
+		
 		Vec3 look = player.getLookVec();
 		look = look.addVector(look.xCoord * 4, look.yCoord * 4, look.zCoord * 4);
 		int[] pos = tes.rayTrace(player.getPosition(1f).addVector(0, player.getEyeHeight(), 0),look);
@@ -198,16 +248,17 @@ public class BlockSculpture extends BlockContainer{
 								if(par1World.isAirBlock(ox, oy, oz))
 								{
 									createEmpty = true;
-									par1World.setBlockAndMetadataWithUpdate( ox,oy,oz, this.blockID, tes.getBlockMetadata(),false);
+									par1World.setBlockAndMetadataWithUpdate( ox,oy,oz, this.blockID, player.getCurrentEquippedItem().getItemDamage(),false);
 									TileEntitySculpture another = (TileEntitySculpture) par1World.getBlockTileEntity(ox,oy,oz);
 									another.clear();
 								}
 								if(par1World.getBlockId(ox,oy,oz) != this.blockID)continue;
+								if(par1World.getBlockMetadata(ox, oy, oz)!= player.getCurrentEquippedItem().getItemDamage())continue;
 								
 								TileEntitySculpture another = (TileEntitySculpture) par1World.getBlockTileEntity(ox,oy,oz);
 								another.set(x , y , z );
 								modCount++;
-							}else{
+							}else if(player.getCurrentEquippedItem().getItemDamage() == tes.getBlockMetadata()){
 								tes.set(x, y, z);
 								modCount++;
 							}
@@ -231,7 +282,7 @@ public class BlockSculpture extends BlockContainer{
 				dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");			
 			
 			if(tes.isEmpty())par1World.setBlock(par2, par3, par4, 0);
-		}else
+		}else if(modCount > 0)
 			player.getCurrentEquippedItem().stackSize--;
 
 		par1World.notifyBlockChange(par2, par3, par4, this.blockID);

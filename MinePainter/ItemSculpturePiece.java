@@ -9,4 +9,8 @@ public class ItemSculpturePiece extends Item{
 		setItemName("itemSculpturePiece");
 	}
 
+	public boolean getHasSubtypes()
+	{
+		return true;
+	}
 }

@@ -9,4 +9,8 @@ public class ItemSculptureBar extends Item{
 		setItemName("itemSculptureBar");
 	}
 
+	public boolean getHasSubtypes()
+	{
+		return true;
+	}
 }

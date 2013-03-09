@@ -61,6 +61,7 @@ public class BlockLift extends Block{
 
 	private static Object reflectCall(Object thing, String name, Object... params)
 	{
+		if(ObfuscationReflectionHelper.obfuscation)return false;
 		try
 		{
 			Class<?>[] classes = new Class<?>[params.length];

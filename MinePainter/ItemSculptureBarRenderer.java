@@ -4,7 +4,6 @@ public class ItemSculptureBarRenderer extends ItemSculpturePieceRenderer{
 
 	public ItemSculptureBarRenderer()
 	{
-		this.sy = 1f;
-		this.biasY = 0;
+		minmax = new int[]{5,0,5,8,8,8};
 	}
 }

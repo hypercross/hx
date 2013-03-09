@@ -28,7 +28,6 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static TileEntitySculpture full = new TileEntitySculpture();
 	
 	byte[] data = new byte[64];
-	byte[] ao   = new byte[2048];
 	
 	public int biasX,biasY,biasZ;
 	
@@ -169,7 +168,10 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getLightBrightnessForSkyBlocks(int var1, int var2, int var3, int var4) {
-		return worldObj.getLightBrightnessForSkyBlocks(var1, var2, var3, var4);
+		return  worldObj.getLightBrightnessForSkyBlocks(this.xCoord, this.yCoord, this.zCoord, var4);
+//		return darkness(var1 - this.xCoord + biasX,
+//				   var2 - this.yCoord + biasY,
+//				   var3 - this.zCoord + biasZ,var4);
 	}
 
 	@Override
@@ -359,6 +361,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 			shift(box,selectionPoint[3]);
 			minmax[0]=minmax[1]=minmax[2]=0;
 			minmax[3]=minmax[4]=minmax[5]=8;
+			shiftMinmax(box,minmax);
 		}
 		switch(mode)
 		{
@@ -378,6 +381,24 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 			return box;
 		}
 		return null;
+	}
+	
+	private static void shiftMinmax(int box[], int[] minmax)
+	{
+		for(int i =0;i<3;i++)
+		{
+			if(box[i] < minmax[i])
+			{
+				minmax[i]-=8;
+				minmax[i+3]-=8;
+			}
+			if(box[i+3] > minmax[i+3])
+			{
+				minmax[i]+=8;
+				minmax[i+3]+=8;
+			}
+		}
+		
 	}
 	
 	private static void shift(int[] box, int face)
@@ -401,12 +422,12 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static int getMode(ItemStack is)
 	{
 		if(is == null)return -1;
-		if(is.itemID == Item.pickaxeWood.shiftedIndex)return 0;
-		if(is.itemID == Item.pickaxeStone.shiftedIndex)return 1;
-		if(is.itemID == Item.pickaxeSteel.shiftedIndex)return 2;
-		if(is.itemID == ModMinePainter.instance.item("SculpturePiece").item().shiftedIndex)return 3;
-		if(is.itemID == ModMinePainter.instance.item("SculptureBar").item().shiftedIndex)return 4;
-		if(is.itemID == ModMinePainter.instance.item("SculptureCover").item().shiftedIndex)return 5;
+		if(is.itemID == Item.pickaxeWood.itemID)return 0;
+		if(is.itemID == Item.pickaxeStone.itemID)return 1;
+		if(is.itemID == Item.pickaxeSteel.itemID)return 2;
+		if(is.itemID == ModMinePainter.instance.item("SculpturePiece").item().itemID)return 3;
+		if(is.itemID == ModMinePainter.instance.item("SculptureBar").item().itemID)return 4;
+		if(is.itemID == ModMinePainter.instance.item("SculptureCover").item().itemID)return 5;
 		return -1;
 	}
 	
@@ -456,32 +477,6 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		
 		return new int[]{minX,minY,minZ,maxX,maxY,maxZ};
 	}
-	
-	//ao
-	
-	public void calculateAO()
-	{
-		
-	}
-	
-	public void setAO(int x,int y,int z,int l)
-	{
-		x %= 16;
-		y %= 16;
-		z %= 16;
-		
-		byte b = ao[x*128 + y*8 + z/2];
-	}
-	
-	public int getAO(int x,int y,int z)
-	{
-		x %= 16;
-		y %= 16;
-		z %= 16;
-		
-		byte b = ao[x*128 + y*8 + z/2];
-		return (z%2 == 1) ? b & 15 : (b & 255) >> 4; 
-	}
 
 	public void clear() {
 		Arrays.fill(data, (byte)0);
@@ -496,5 +491,20 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		for(int i =0;i<data.length;i++)
 			if(data[i] != 0)return false;
 		return true;
+	}
+	
+	public int darkness(int x,int y,int z,int var4)
+	{
+		int light = 0;
+		for(int i =0;i<6;i++)
+		{
+			int face_light = worldObj.getLightBrightnessForSkyBlocks(this.xCoord, this.yCoord, this.zCoord, var4);
+			
+			light += (7 - x)*Facing.offsetsXForSide[i] * face_light;
+			light += (7 - y)*Facing.offsetsYForSide[i] * face_light;
+			light += (7 - z)*Facing.offsetsZForSide[i] * face_light;
+		}
+		
+		return light / 6;
 	}
 }

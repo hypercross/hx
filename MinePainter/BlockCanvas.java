@@ -85,12 +85,12 @@ public class BlockCanvas extends BlockContainer{
 
     public int idDropped(int par1, Random par2Random, int par3)
     {
-    	return ModMinePainter.instance.item("Canvas").item().shiftedIndex;
+    	return ModMinePainter.instance.item("Canvas").item().itemID;
     }
     
     public int idPicked(World par1World, int par2, int par3, int par4)
     {
-        return ModMinePainter.instance.item("Canvas").item().shiftedIndex;
+        return ModMinePainter.instance.item("Canvas").item().itemID;
     }
     
     @Override
@@ -129,10 +129,10 @@ public class BlockCanvas extends BlockContainer{
     	int code = 0;
     	if(ep.inventory.getCurrentItem() == null)
     		code = 0;
-    	else if(ep.getCurrentEquippedItem().itemID == Item.dyePowder.shiftedIndex)
+    	else if(ep.getCurrentEquippedItem().itemID == Item.dyePowder.itemID)
     	{
     		code = ep.getCurrentEquippedItem().getItemDamage() | 16;
-    	}else if(ep.getCurrentEquippedItem().itemID == Item.slimeBall.shiftedIndex)
+    	}else if(ep.getCurrentEquippedItem().itemID == Item.slimeBall.itemID)
     	{
     		code = -1;
     	}else return false;
@@ -147,8 +147,8 @@ public class BlockCanvas extends BlockContainer{
     	if(code == -1)
     		tec.image.fill(0);
     	else if(!ep.isWet())
-    		tec.image.set(15-index/16, 16-index%16, code);
-    	else tec.image.flood(15-index/16, 16-index%16, -1, code);
+    		tec.image.set(15-index/16, 15-index%16, code);
+    	else tec.image.flood(15-index/16, 15-index%16, -1, code);
     	
     	w.markBlockForUpdate(x, y, z);
     	

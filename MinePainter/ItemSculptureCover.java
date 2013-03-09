@@ -7,4 +7,9 @@ public class ItemSculptureCover extends Item{
 		super(par1);
 		setItemName("itemSculptureCover");
 	}
+	
+	public boolean getHasSubtypes()
+	{
+		return true;
+	}
 }

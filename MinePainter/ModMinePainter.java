@@ -1,5 +1,6 @@
 package hx.MinePainter;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import hx.utils.HyperMod;
@@ -39,12 +40,13 @@ public class ModMinePainter extends HyperMod{
     public void load(FMLInitializationEvent event)
     {
         super.load(event);
-        GameRegistry.addRecipe(new ItemStack(item("SculptureBar").item()),
-        		"XXX","X X","XXX",
-        		'X',new ItemStack(item("SculpturePiece").item()));
-        GameRegistry.addRecipe(new ItemStack(item("SculptureCover").item()),
-        		"XXX","X X","XXX",
-        		'X',new ItemStack(item("SculptureBar").item()));
+        GameRegistry.addRecipe(new RecipeSculptureScrap());
+        
+        if(item("Canvas").item() != null)
+        GameRegistry.addRecipe(new ItemStack(item("Canvas").item()),
+        		"XXX","XXX",
+        		'X', new ItemStack(Block.cloth));
+        		
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }

@@ -18,11 +18,8 @@ import net.minecraftforge.client.IItemRenderer;
 public class ItemSculpturePieceRenderer implements IItemRenderer {
 	private static RenderItem renderItem = new RenderItem();
 	
-	float sx = 1/2f, sy = 1/2f, sz = 1/2f;
-	int biasX = 8;
-	int biasY = 8;
-	
-	float tx = 2, ty = 2, tz = -1;
+	int minmax[]={5,5,5,8,8,8};
+	int   biasX = 0, biasY = 0;
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
@@ -45,30 +42,28 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		ItemStack is = new ItemStack(BlockSculpture.materialBlock[item.getItemDamage()]);
 		RenderBlocks rb = (RenderBlocks) (data[0]);
 	
+		BlockSculpture.materialBlock[item.getItemDamage()].setBlockBounds(minmax[0]/8f,minmax[1]/8f,minmax[2]/8f,
+																			minmax[3]/8f,minmax[4]/8f,minmax[5]/8f);
+		
 		if(type == ItemRenderType.INVENTORY)
 		{
-			GL11.glPushMatrix();
-			GL11.glScaled(sx, sy, sz);
-			RenderHelper.enableGUIStandardItemLighting();
 			renderItem.renderItemIntoGUI(
 					Minecraft.getMinecraft().fontRenderer,
 					Minecraft.getMinecraft().renderEngine, is, biasX,biasY);
-			GL11.glPopMatrix();
 		}else if(type == ItemRenderType.ENTITY)
 		{
 			EntityItem eis = (EntityItem)data[1];
-			eis.func_92013_a(is);
 			
+			eis.func_92013_a(is);
 			renderItem.doRenderItem(eis, eis.posX, eis.posY, eis.posZ, 0,0);
+
 		}else
 		{
-			GL11.glPushMatrix();
-			GL11.glScaled(sx/2, sy/2, sz/2);
-			GL11.glTranslated(tx, ty, tz);
 			Minecraft.getMinecraft().entityRenderer.itemRenderer.renderItem((EntityLiving) data[1],
 					is, 0);
-			GL11.glPopMatrix();
 		}
+		
+		BlockSculpture.materialBlock[item.getItemDamage()].setBlockBounds(0,0,0,1,1,1);
 	}
 
 }
