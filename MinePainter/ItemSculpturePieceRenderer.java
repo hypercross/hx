@@ -47,6 +47,7 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		
 		if(type == ItemRenderType.INVENTORY)
 		{
+			RenderHelper.enableGUIStandardItemLighting();
 			renderItem.renderItemIntoGUI(
 					Minecraft.getMinecraft().fontRenderer,
 					Minecraft.getMinecraft().renderEngine, is, biasX,biasY);

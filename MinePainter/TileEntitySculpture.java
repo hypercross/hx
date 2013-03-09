@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Facing;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3Pool;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 
@@ -28,6 +29,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static TileEntitySculpture full = new TileEntitySculpture();
 	
 	byte[] data = new byte[64];
+	byte[] lighting = new byte[512];
 	
 	public int biasX,biasY,biasZ;
 	
@@ -136,6 +138,23 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
     }
     
 	//IBlockAccess
+    //
+    //
+    //
+    //
+    //
+    
+    private int[] toLocal(int x,int y,int z)
+    {
+    	return new int[]{ x - this.xCoord + biasX,
+    				      y - this.yCoord + biasY,
+    				      z - this.zCoord + biasZ};
+    }
+    
+    private boolean invalid(int[] coord)
+    {
+    	return invalid(coord[0],coord[1],coord[2]);
+    }
 
 	public void bias(int x,int y,int z)
 	{
@@ -147,10 +166,10 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean isBlockOpaqueCube(int var1, int var2, int var3) {
-//		return worldObj.isBlockOpaqueCube(var1, var2, var3);
-		return get(var1 - this.xCoord + biasX,
-				   var2 - this.yCoord + biasY,
-				   var3 - this.zCoord + biasZ);
+		int[] local = toLocal(var1,var2,var3);
+		if(!invalid(local))
+			return get(local[0],local[1],local[2]);
+		return worldObj.isBlockOpaqueCube(var1,var2,var3);
 	}
 	
 	@Override
@@ -168,10 +187,11 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getLightBrightnessForSkyBlocks(int var1, int var2, int var3, int var4) {
-		return  worldObj.getLightBrightnessForSkyBlocks(this.xCoord, this.yCoord, this.zCoord, var4);
-//		return darkness(var1 - this.xCoord + biasX,
-//				   var2 - this.yCoord + biasY,
-//				   var3 - this.zCoord + biasZ,var4);
+//		int[] local = toLocal(var1,var2,var3);
+//		if(!invalid(local))
+//			return worldObj.getLightBrightnessForSkyBlocks(var1, var2, var3, var4);
+//		
+		return worldObj.getLightBrightnessForSkyBlocks(this.xCoord,this.yCoord,this.zCoord,var4);
 	}
 
 	@Override
@@ -206,7 +226,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		int z = var3 - this.zCoord + biasZ;
 		
 		if(get(x,y,z))return true;
-		if(invalid(x,y,z))return false; //return worldObj.isBlockNormalCube(var1, var2, var3);
+		if(invalid(x,y,z))return false;
 		return false;
 	}
 
@@ -491,20 +511,5 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		for(int i =0;i<data.length;i++)
 			if(data[i] != 0)return false;
 		return true;
-	}
-	
-	public int darkness(int x,int y,int z,int var4)
-	{
-		int light = 0;
-		for(int i =0;i<6;i++)
-		{
-			int face_light = worldObj.getLightBrightnessForSkyBlocks(this.xCoord, this.yCoord, this.zCoord, var4);
-			
-			light += (7 - x)*Facing.offsetsXForSide[i] * face_light;
-			light += (7 - y)*Facing.offsetsYForSide[i] * face_light;
-			light += (7 - z)*Facing.offsetsZForSide[i] * face_light;
-		}
-		
-		return light / 6;
 	}
 }
