@@ -110,7 +110,7 @@ public abstract class MethodInjectorTransformer implements IClassTransformer
     }
 
     @Override
-    public byte[] transform(String name, byte[] bytes)
+    public byte[] transform(String name, String transformedName, byte[] bytes)
     {
         if (name.equals("hx.utils.Obfuscated"))
         {

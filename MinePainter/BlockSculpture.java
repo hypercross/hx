@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Facing;
+import net.minecraft.util.Icon;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,9 +32,9 @@ public class BlockSculpture extends BlockContainer{
 
 	public BlockSculpture(int id) {
 		super(id, Material.rock);
-		setBlockName("blockSculpture");
+		setUnlocalizedName("blockSculpture");
 		setCreativeTab(CreativeTabs.tabDecorations);
-		this.setRequiresSelfNotify();
+		//this.setRequiresSelfNotify();
 		this.setHardness(10f);
 	}
 	
@@ -43,7 +44,7 @@ public class BlockSculpture extends BlockContainer{
         return !iba.isBlockOpaqueCube(par2, par3, par4);
     }
 	
-	public int getBlockTextureFromSideAndMetadata(int par1, int par2)
+	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
 	{
 		return materialBlock[par2].getBlockTextureFromSide(par1);
 	}
@@ -122,7 +123,7 @@ public class BlockSculpture extends BlockContainer{
 		return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].blockID;
 	}
 
-	public void addCollidingBlockToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
+	public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
 	{
 		TileEntitySculpture tes = (TileEntitySculpture) par1World.getBlockTileEntity(par2, par3, par4);
 		tes.updateBounds(this);		
@@ -149,12 +150,7 @@ public class BlockSculpture extends BlockContainer{
 										Math.min((_y/4 +1) * 0.5f, maxy),
 										Math.min((_z/4 +1) * 0.5f, maxz));
 
-						AxisAlignedBB var8 = AxisAlignedBB.getAABBPool().addOrModifyAABBInPool((double)par2 + this.minX, (double)par3 + this.minY, (double)par4 + this.minZ, (double)par2 + this.maxX, (double)par3 + this.maxY, (double)par4 + this.maxZ);
-
-				        if (var8 != null && par5AxisAlignedBB.intersectsWith(var8))
-				        {
-				            par6List.add(var8);
-				        }
+						super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
 				        
 				        _x = _x/4*4 + 3;
 				        _y = _y/4*4 + 3;
@@ -248,7 +244,7 @@ public class BlockSculpture extends BlockContainer{
 								if(par1World.isAirBlock(ox, oy, oz))
 								{
 									createEmpty = true;
-									par1World.setBlockAndMetadataWithUpdate( ox,oy,oz, this.blockID, player.getCurrentEquippedItem().getItemDamage(),false);
+									par1World.setBlockAndMetadataWithNotify( ox,oy,oz, this.blockID, player.getCurrentEquippedItem().getItemDamage(), 2);
 									TileEntitySculpture another = (TileEntitySculpture) par1World.getBlockTileEntity(ox,oy,oz);
 									another.clear();
 								}
@@ -281,7 +277,7 @@ public class BlockSculpture extends BlockContainer{
 			if(modCount > 0)
 				dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");			
 			
-			if(tes.isEmpty())par1World.setBlock(par2, par3, par4, 0);
+			if(tes.isEmpty())par1World.setBlockAndMetadataWithNotify(par2, par3, par4, 0,0,3);
 		}else if(modCount > 0)
 			player.getCurrentEquippedItem().stackSize--;
 

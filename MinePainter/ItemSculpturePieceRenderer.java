@@ -54,7 +54,7 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		{
 			EntityItem eis = (EntityItem)data[1];
 			
-			eis.func_92013_a(is);
+			eis.setEntityItemStack(is);
 			renderItem.doRenderItem(eis, eis.posX, eis.posY, eis.posZ, 0,0);
 
 		}else

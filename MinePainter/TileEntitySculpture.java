@@ -250,9 +250,9 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	}
 
 	@Override
-	public boolean isBlockProvidingPowerTo(int var1, int var2, int var3,
+	public int isBlockProvidingPowerTo(int var1, int var2, int var3,
 			int var4) {
-		return false;
+		return 0;
 	}
 	
 	public int[] rayTrace(Vec3 start, Vec3 dist)

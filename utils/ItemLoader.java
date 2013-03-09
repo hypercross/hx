@@ -51,7 +51,15 @@ public class ItemLoader
     {
         try
         {
-            Class itemClass = Class.forName(mod.getClass().getPackage().getName() + "." + "Item" + name);
+        	if(itemID <= 0)
+        	{
+        		FMLLog.getLogger().fine("Item "+name+"disabled through config.");
+        		return;
+        	}
+        	
+        	String pathName = mod.getClass().getName();
+        	pathName = pathName.substring(0,pathName.lastIndexOf("."));
+            Class itemClass = Class.forName(pathName + "." + "Item" + name);
             theItem = (Item) itemClass.getConstructor(int.class).newInstance(itemID);
             String dispName = "";
 
@@ -71,11 +79,14 @@ public class ItemLoader
     }
 
 	public void registerRenderer() {
-		if(FMLCommonHandler.instance().getSide().isServer())return;
+		if(itemID <= 0)return;
 		
+		if(FMLCommonHandler.instance().getSide().isServer())return;
+		String pathname = mod.getClass().getName();
+    	pathname = pathname.substring(0,pathname.lastIndexOf("."));
 		try{
-			Class itemRender = Class.forName(mod.getClass().getPackage().getName() + "." + "Item" + name + "Renderer");
-			MinecraftForgeClient.registerItemRenderer(this.item().shiftedIndex, (IItemRenderer) itemRender.newInstance());
+			Class itemRender = Class.forName(pathname + "." + "Item" + name + "Renderer");
+			MinecraftForgeClient.registerItemRenderer(this.item().itemID, (IItemRenderer) itemRender.newInstance());
 		}catch(Exception e)
 		{
 			FMLLog.getLogger().fine("item renderer skipped for " + name);

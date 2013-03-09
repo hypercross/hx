@@ -21,8 +21,7 @@ public class BlockCanvas extends BlockContainer{
 
 	public BlockCanvas(int id){
 		super(id, Material.cloth);
-		setRequiresSelfNotify();
-		setBlockName("blockCanvas");		
+		setUnlocalizedName("blockCanvas");		
 	}
 
 	@Override
@@ -118,7 +117,7 @@ public class BlockCanvas extends BlockContainer{
             return;
         }
 
-        w.setBlock(x, y, z, 0);
+        w.setBlockAndMetadataWithNotify(x, y, z, 0, 0, 3);
     }
     
     public boolean onBlockActivated(World w, int x, int y, int z, EntityPlayer ep,

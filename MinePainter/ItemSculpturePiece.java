@@ -6,7 +6,7 @@ public class ItemSculpturePiece extends Item{
 
 	public ItemSculpturePiece(int par1) {
 		super(par1);
-		setItemName("itemSculpturePiece");
+		setUnlocalizedName("itemSculpturePiece");
 	}
 
 	public boolean getHasSubtypes()

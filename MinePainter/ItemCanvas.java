@@ -16,8 +16,7 @@ public class ItemCanvas extends Item{
 	public ItemCanvas(int id) {
 		super(id);
 		setCreativeTab(CreativeTabs.tabDecorations);
-		setIconCoord(10, 1);
-		setItemName("itemCanvas");
+		setUnlocalizedName("itemCanvas");
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -67,7 +66,7 @@ public class ItemCanvas extends Item{
         if(w.getBlockId(_x, _y, _z)>0)return false;
         
         int canvasID = ModMinePainter.instance.block("Canvas").id();
-        w.setBlockAndMetadataWithNotify(_x, _y, _z, canvasID, getMeta(ep, face));
+        w.setBlockAndMetadataWithNotify(_x, _y, _z, canvasID, getMeta(ep, face), 2);
         
         if(ep.capabilities.isCreativeMode)return true;
         is.stackSize -- ;

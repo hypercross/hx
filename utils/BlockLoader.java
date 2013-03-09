@@ -61,7 +61,15 @@ public class BlockLoader
     {
         try
         {
-            Class blockClass = Class.forName(mod.getClass().getPackage().getName() + "." + "Block" + name);
+        	if(blockID<=0)
+        	{
+        		FMLLog.getLogger().fine("Block " + name + "disabled through config.");
+        		return;
+        	}
+        	String pathname = mod.getClass().getName();
+        	pathname = pathname.substring(0,pathname.lastIndexOf("."));
+        	FMLLog.getLogger().fine(pathname + "." + "Block" + name);
+            Class blockClass = Class.forName(pathname + "." + "Block" + this.name);
             theBlock = (Block) blockClass.getConstructor(int.class).newInstance(blockID);
             GameRegistry.registerBlock(theBlock);
             String dispName = "";
@@ -77,7 +85,7 @@ public class BlockLoader
 
             try
             {
-                Class tileEntityClass = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name);
+                Class tileEntityClass = Class.forName(pathname + "." + "TileEntity" + name);
                 GameRegistry.registerTileEntity(tileEntityClass, "tileEntity" + name);
                 FMLLog.getLogger().finest("Tile entity " + name + " registered.");
             }
@@ -89,17 +97,21 @@ public class BlockLoader
         catch (Exception e)
         {
             FMLLog.getLogger().severe("Block class NOT FOUND for " + name + "!");
+            
             e.printStackTrace();
         }
     }
     
     public void registerRenderers()
     {
+    	if(blockID<=0)return;
+    	String pathname = mod.getClass().getName();
+    	pathname = pathname.substring(0,pathname.lastIndexOf("."));
     	if(FMLCommonHandler.instance().getSide().isServer())return;
     	 try
          {
-             Class tileEntity = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name);
-             Class tileEntityRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "TileEntity" + name + "Renderer");
+             Class tileEntity = Class.forName(pathname + "." + "TileEntity" + name);
+             Class tileEntityRenderer = Class.forName(pathname + "." + "TileEntity" + name + "Renderer");
              ClientRegistry.bindTileEntitySpecialRenderer(tileEntity, (TileEntitySpecialRenderer) tileEntityRenderer.newInstance());
              FMLLog.getLogger().finest("Tile entity renderer " + name + " registered.");
          }
@@ -110,7 +122,7 @@ public class BlockLoader
 
          try
          {
-             Class blockRenderer = Class.forName(mod.getClass().getPackage().getName() + "." + "Block" + name + "Renderer");
+             Class blockRenderer = Class.forName(pathname + "." + "Block" + name + "Renderer");
              this.blockRI = RenderingRegistry.getNextAvailableRenderId();
              RenderingRegistry.registerBlockHandler((ISimpleBlockRenderingHandler) blockRenderer.newInstance());
              FMLLog.getLogger().finest("Block renderer" + name + " registered.");
@@ -123,6 +135,7 @@ public class BlockLoader
 
     public void registerRenderers(Object proxy)
     {
+    	if(blockID<=0)return ;
         if (!proxy.getClass().getName().endsWith("ClientProxy"))
         {
             return;

@@ -10,7 +10,7 @@ public class ItemSculptingPickaxe extends Item{
 		maxStackSize = 1;
 		this.setMaxDamage(240);
 		setCreativeTab(CreativeTabs.tabTools);
-		setItemName("itemSculptingPickaxe");
+		setUnlocalizedName("itemSculptingPickaxe");
 	}
 	
 }

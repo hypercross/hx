@@ -42,7 +42,7 @@ public class EventHandler {
 			for(int i =0;i<16;i++)
 				if(sculpture.materialBlock(i).blockID == materialID)
 				{
-					event.entity.worldObj.setBlockAndMetadata(event.x, event.y, event.z, sculpture.blockID, i);
+					event.entity.worldObj.setBlockAndMetadataWithNotify(event.x, event.y, event.z, sculpture.blockID, i, 3);
 					return;
 				}
 		}else if(event.entity.worldObj.getBlockId(event.x, event.y, event.z) != sculpture.blockID){

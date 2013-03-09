@@ -23,7 +23,7 @@ public class ModMinePainter extends HyperMod{
 		this.BLOCK_BASE_ID = 3500;
 		this.ITEM_BASE_ID  = 9700;
 		this.MAIN_TEXTURE = "/hx/MinePainter/img.png";
-		addBlocks("Canvas", "Sculpture", "Lift");
+		addBlocks("Canvas", "Sculpture");
 		addItems("Canvas","SculpturePiece", "SculptureCover", "SculptureBar");
 	}
 	

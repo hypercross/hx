@@ -7,6 +7,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -32,6 +33,7 @@ public class HyperMod
         for (String name : names)
         {
             blockLoaders.put(name, new BlockLoader(this, name));
+            FMLLog.getLogger().fine("added block..." + name);
         }
     }
 
