@@ -25,7 +25,7 @@ import net.minecraftforge.common.ForgeDirection;
 public class BlockSculpture extends BlockContainer{
 	
 	public static Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
-									Block.planks, Block.brick, Block.cloth, Block.ice, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
+									Block.planks, Block.brick, Block.cloth, Block.glass, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
 	
 	public boolean onSelect = false;
 	public static boolean createEmpty = false;
@@ -96,27 +96,7 @@ public class BlockSculpture extends BlockContainer{
 				for(int _z = 0;_z<8;_z++)
 					if(tes.get(_x, _y, _z))modCount++;
     	
-    	if(modCount >= 512)
-    	{
-    		ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()), 1, tes.blockMeta);
-    		EntityItem entity = new EntityItem(par1World,par2,par3,par4,is);
-    		entity.delayBeforeCanPickup = 10;
-    		par1World.spawnEntityInWorld(entity);
-    		modCount %= 512;
-    	}
-    	
-    	if(modCount >= 64)
-		{
-			dropScrap(par1World,par2,par3,par4,modCount/64,"SculptureCover");
-			modCount %= 64;
-		}
-		if(modCount >= 8)
-		{
-			dropScrap(par1World,par2,par3,par4,modCount/8,"SculptureBar");
-			modCount %= 8;
-		}
-		if(modCount > 0)
-			dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");
+    	dropAllScrap(par1World,par2,par3,par4,modCount);
 		
 		super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
@@ -272,18 +252,7 @@ public class BlockSculpture extends BlockContainer{
 		
 		if(mode < 3)
 		{
-			if(modCount >= 64)
-			{
-				dropScrap(par1World,par2,par3,par4,modCount/64,"SculptureCover");
-				modCount %= 64;
-			}
-			if(modCount >= 8)
-			{
-				dropScrap(par1World,par2,par3,par4,modCount/8,"SculptureBar");
-				modCount %= 8;
-			}
-			if(modCount > 0)
-				dropScrap(par1World,par2,par3,par4,modCount,"SculpturePiece");			
+			dropAllScrap(par1World,par2,par3,par4,modCount);			
 			
 			if(tes.isEmpty())
 				{
@@ -296,6 +265,33 @@ public class BlockSculpture extends BlockContainer{
 		par1World.notifyBlockChange(par2, par3, par4, this.blockID);
 		
 		return true;
+	}
+	
+	public void dropAllScrap(World w,int x,int y,int z,int modCount)
+	{
+		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y, z);
+		
+		if(modCount >= 512)
+    	{
+    		ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()), 1, tes.blockMeta);
+    		EntityItem entity = new EntityItem(w,x,y,z,is);
+    		entity.delayBeforeCanPickup = 10;
+    		w.spawnEntityInWorld(entity);
+    		modCount %= 512;
+    	}
+    	
+    	if(modCount >= 64)
+		{
+			dropScrap(w,x,y,z,modCount/64,"SculptureCover");
+			modCount %= 64;
+		}
+		if(modCount >= 8)
+		{
+			dropScrap(w,x,y,z,modCount/8,"SculptureBar");
+			modCount %= 8;
+		}
+		if(modCount > 0)
+			dropScrap(w,x,y,z,modCount,"SculpturePiece");
 	}
 	
 	private void dropScrap(World w, int x,int y,int z, int count, String name)

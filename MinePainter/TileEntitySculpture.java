@@ -28,7 +28,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	
 	public static TileEntitySculpture full = new TileEntitySculpture();
 	
-	byte[] data = new byte[64];
+	public byte[] data = new byte[64];
 	public int blockMeta;
 	
 	public int biasX,biasY,biasZ;
@@ -55,9 +55,9 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public boolean get(int x,int y,int z)
 	{
 		if(invalid(x,y,z))return false;
-		byte strip = data[x*8+y];
+		byte strip = data[x*8+z];
 		
-		return ((strip >> z) & 1) == 1;
+		return ((strip >> y) & 1) == 1;
 	}
 	
 	public void set (int x,int y,int z)
@@ -65,10 +65,10 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		x = normalize(x);
 		y = normalize(y);
 		z = normalize(z);
-		byte strip = data[x*8+y];
+		byte strip = data[x*8+z];
 		
-		strip |= (1 << z);
-		data[x * 8 + y] = strip;
+		strip |= (1 << y);
+		data[x * 8 + z] = strip;
 		
 		needUpdate = true;
 	}
@@ -83,10 +83,10 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	{
 		x%=8;
 		y%=8;
-		byte strip = data[x*8+y];
+		byte strip = data[x*8+z];
 		
-		strip &= (1 << z) ^ -1;
-		data[x * 8 + y] = strip;
+		strip &= (1 << y) ^ -1;
+		data[x * 8 + z] = strip;
 		
 		needUpdate = true;
 	}
@@ -513,5 +513,15 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		for(int i =0;i<data.length;i++)
 			if(data[i] != 0)return false;
 		return true;
+	}
+	
+	public void rotate()
+	{
+		byte[] newByte = new byte[64];
+		for(int i =0;i<8;i++)
+			for(int j =0;j<8;j++)
+				newByte[i*8 + j] = data[(7-i) + j*8];
+		
+		this.data = newByte;
 	}
 }

@@ -54,7 +54,6 @@ public class EventHandler {
 			int y = event.y + Facing.offsetsYForSide[event.face];
 			int z = event.z + Facing.offsetsZForSide[event.face];
 			
-			System.err.println("blah "  + event.face);
 			if(event.entity.worldObj.isAirBlock(x, y, z) || event.entity.worldObj.getBlockId(x,y,z) == sculpture.blockID)
 				sculpture.onBlockActivated(event.entity.worldObj, event.x, event.y, event.z, event.entityPlayer, 0, 0, 0, 0);
 				
