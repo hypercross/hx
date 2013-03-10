@@ -23,7 +23,7 @@ public class HyperMod
     public int ITEM_BASE_ID;
     public int ITEM_LOADED_ID = 0;
 
-    public String MAIN_TEXTURE;
+    public String MAIN_TEXTURE = null;
 
     private TreeMap<String, BlockLoader> blockLoaders = new TreeMap<String, BlockLoader>();
     private TreeMap<String, ItemLoader> itemLoaders = new TreeMap<String, ItemLoader>();
@@ -134,7 +134,8 @@ public class HyperMod
     	{
     		il.registerRenderer();
     	}
-    	MinecraftForgeClient.preloadTexture(this.MAIN_TEXTURE);
+    	if(MAIN_TEXTURE != null)
+    		MinecraftForgeClient.preloadTexture(this.MAIN_TEXTURE);
     }
 
     public void registerRendering(Object proxy)

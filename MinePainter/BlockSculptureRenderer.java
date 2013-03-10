@@ -51,9 +51,9 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 					
 					tes.bias(_x, _y, _z);
 
-					int startIndex = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, "rawBufferIndex");
+					int startIndex = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, 22);
 					renderer.renderStandardBlock( sculpture , x, y, z);
-					int endIndex = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, "rawBufferIndex");
+					int endIndex = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, 22);
 					
 					subBlockCoord(_x,_y,_z);
 					translateTessellator(startIndex,endIndex);
@@ -77,7 +77,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 	private void translateTessellator(int start, int end)
 	{
 //		Debug.dafuq("called " + start + " to " + end);
-		int[] buffer = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, "rawBuffer");
+		int[] buffer = ObfuscationReflectionHelper.getPrivateValue(Tessellator.class, Tessellator.instance, 12);
 		
 		float umin = Float.MAX_VALUE;
 		float vmin = Float.MAX_VALUE;
