@@ -1,8 +1,11 @@
 package hx.MinePainter;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import hx.utils.Debug;
 import hx.utils.HyperMod;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -13,9 +16,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = "mod_MinePainter", name = "MinePainter", version = "0.0.2")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+@Mod(modid = "mod_MinePainter", name = "MinePainter", version = "0.1.0")
+@NetworkMod(clientSideRequired = true, serverSideRequired = false,
+channels={"ModMinePainter"}, packetHandler = PacketHandler.class)
 public class ModMinePainter extends HyperMod{
 
 	public ModMinePainter()
@@ -23,7 +28,8 @@ public class ModMinePainter extends HyperMod{
 		this.BLOCK_BASE_ID = 3500;
 		this.ITEM_BASE_ID  = 9700;
 		addBlocks("Canvas", "Sculpture");
-		addItems("Canvas","SculpturePiece", "SculptureCover", "SculptureBar", "Schematic");
+		addItems("Canvas","SculpturePiece", "SculptureCover", "SculptureBar", "Schematic", 
+				"IronChisel", "DiamondChisel", "StoneChisel", "Hinge");
 	} 
 	
 	@Instance("mod_MinePainter")
@@ -46,6 +52,39 @@ public class ModMinePainter extends HyperMod{
         		"XXX","XXX",
         		'X', new ItemStack(Block.cloth));
         		
+        if(item("IronChisel").item() != null)
+        	GameRegistry.addRecipe(new ItemStack(item("IronChisel").item()),
+            		"X "," Y",
+            		'X', new ItemStack(Item.ingotIron),
+            		'Y', new ItemStack(Item.stick));
+        
+        if(item("StoneChisel").item() != null)
+        	GameRegistry.addRecipe(new ItemStack(item("StoneChisel").item()),
+            		"X "," Y",
+            		'X', new ItemStack(Block.cobblestone),
+            		'Y', new ItemStack(Item.stick));
+        
+        if(item("DiamondChisel").item() != null)
+        	GameRegistry.addRecipe(new ItemStack(item("DiamondChisel").item()),
+            		"X "," Y",
+            		'X', new ItemStack(Item.diamond),
+            		'Y', new ItemStack(Item.stick));
+        
+        if(item("Schematic").item() != null)
+        	GameRegistry.addShapelessRecipe(new ItemStack(item("Schematic").item()), 
+        			new Object[]{ new ItemStack(Item.paper), new ItemStack(Item.paper), new ItemStack(Item.paper), 
+        		new ItemStack(Item.dyePowder, 3, 4)});
+        
+        if(item("Hinge").item() != null)
+        	GameRegistry.addRecipe(new ItemStack(item("Hinge").item()),
+            		"X","Y","X",
+            		'X', new ItemStack(Item.ingotIron),
+            		'Y', new ItemStack(Item.stick));
+        
+        if(FMLCommonHandler.instance().getSide().isClient())
+        {
+        	MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
+        }
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }

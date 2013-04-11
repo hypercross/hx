@@ -100,7 +100,10 @@
   </target>
 	
 	<target name = "zipreobfoutput" depends="reobfuscate">
-		<zip destfile = "${mcp.obfoutput}/mods.zip" basedir = "${mcp.obfoutput}/minecraft"/>
+		<zip destfile = "${mcp.obfoutput}/mods.zip">
+			<zipfileset dir = "${mcp.obfoutput}/minecraft"/>
+		    <zipfileset dir = "${mcp.home}/src/minecraft/hx" includes = "**/*.png" prefix = "mods"/>
+		</zip>
 	</target>
 
   <target name="recompile" depends="buildenvsetup">
@@ -108,7 +111,7 @@
       <arg value="${mcp.home}/runtime/recompile.py" />
     </exec>
     <fail message="Compilation failed">
-        <condition>
+        <condition> 
             <not>
               <available file="${mcp.home}/bin/minecraft/net/minecraft/client/Minecraft.class"/>
             </not>

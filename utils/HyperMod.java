@@ -36,6 +36,40 @@ public class HyperMod
             FMLLog.getLogger().fine("added block..." + name);
         }
     }
+    
+    public int availableItemId()
+    {
+    	int id = ITEM_BASE_ID;
+    	while(true)
+    	{
+    		boolean used = false;
+    		for(ItemLoader il : itemLoaders.values())
+    			if(il.id() == id)
+    			{
+    				used = true;
+    				break;
+    			}
+    		if(!used)return id;
+    		id++;
+    	}
+    }
+    
+    public int availableBlockId()
+    {
+    	int id = BLOCK_BASE_ID;
+    	while(true)
+    	{
+    		boolean used = false;
+    		for(BlockLoader bl : blockLoaders.values())
+    			if(bl.id() == id)
+    			{
+    				used = true;
+    				break;
+    			}
+    		if(!used)return id;
+    		id++;
+    	}
+    }
 
     public BlockLoader block(String name)
     {
@@ -96,6 +130,9 @@ public class HyperMod
                     else if (f.getGenericType().equals(int[].class))
                     {
                         f.set(this, config.get(anno.value(), f.getName(), (int[]) f.get(this)).getIntList());
+                    }else if(f.getGenericType().equals(String[].class))
+                    {
+                    	f.set(this, config.get(anno.value(), f.getName(), (String[])f.get(this)).getStringList());
                     }
                 }
                 catch (Exception e)

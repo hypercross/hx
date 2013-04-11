@@ -22,6 +22,11 @@ public class MPImage {
 		fill((byte) 31);
 	}
 	
+	public MPImage(byte[] array)
+	{
+		this.fromByteArray(array);
+	}
+	
 	public void fill(int code)
 	{
 		for(int i =0;i<256;i++)
@@ -42,7 +47,7 @@ public class MPImage {
 		flood(x,y+1,before,after);
 	}
 	
-	public void fromByteArray(byte[] data)
+	public boolean fromByteArray(byte[] data)
 	{
 		DataInputStream inputStream = 
 				new DataInputStream(new ByteArrayInputStream(data));
@@ -68,8 +73,9 @@ public class MPImage {
 			}
 			
 		} catch (IOException e) {
-			// hmmm
+			return false;
 		}
+		return true;
 	}
 	
 	public byte[] toByteArray()
@@ -107,6 +113,8 @@ public class MPImage {
 	
 	public int at(int x,int y)
 	{
+		while(x<0)x+=16;
+		while(y<0)y+=16;
 		x %= 16;
 		y %= 16;
 		

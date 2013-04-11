@@ -31,4 +31,16 @@ public class Debug {
 		
 		System.err.println("]");
 	}
+	
+	public static void dafuq(Object[] bal)
+	{
+		System.err.print("[");
+		
+		for(Object blah : bal)
+		{
+			System.err.print(blah + ",");
+		}
+		
+		System.err.println("]");
+	}
 }

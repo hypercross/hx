@@ -20,10 +20,10 @@ public class ItemCanvas extends Item{
 		setUnlocalizedName("itemCanvas");
 	}
 	
-	@SideOnly(Side.CLIENT)
-    public void func_94581_a(IconRegister par1IconRegister)
+	@Override
+	public void updateIcons(IconRegister par1IconRegister)
     {
-        this.iconIndex = par1IconRegister.func_94245_a("painting");
+        this.iconIndex = par1IconRegister.registerIcon("painting");
     }
 
 	@SideOnly(Side.CLIENT)
@@ -60,7 +60,8 @@ public class ItemCanvas extends Item{
 	
 	public boolean onItemUse(ItemStack is, EntityPlayer ep, World w, int x, int y, int z, int face, float xs, float ys, float zs)
 	{
-		if (!Block.isNormalCube(w.getBlockId(x, y, z)))
+		int id = w.getBlockId(x, y, z);
+		if (Block.blocksList[id] != BlockSculpture.instance && !Block.isNormalCube(id))
         {
             return false;
         }
@@ -73,7 +74,7 @@ public class ItemCanvas extends Item{
         if(w.getBlockId(_x, _y, _z)>0)return false;
         
         int canvasID = ModMinePainter.instance.block("Canvas").id();
-        w.setBlockAndMetadataWithNotify(_x, _y, _z, canvasID, getMeta(ep, face), 2);
+        w.setBlock(_x, _y, _z, canvasID, getMeta(ep, face), 3);
         
         if(ep.capabilities.isCreativeMode)return true;
         is.stackSize -- ;

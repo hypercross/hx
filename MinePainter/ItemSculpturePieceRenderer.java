@@ -6,6 +6,7 @@ import hx.utils.Debug;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -13,10 +14,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 
 public class ItemSculpturePieceRenderer implements IItemRenderer {
 	private static RenderItem renderItem = new RenderItem();
+	private static EntityItem ei = new EntityItem(null);
 	
 	int minmax[]={5,5,5,8,8,8};
 	int   biasX = 0, biasY = 0;
@@ -31,7 +34,7 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
 			ItemRendererHelper helper) {
-		return false;
+		return type == ItemRenderType.ENTITY;
 	}
 
 	@Override
@@ -41,11 +44,11 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		int id = item.getItemDamage() & 15;
 		int meta = item.getItemDamage() >> 4;
 		
-		ItemStack is = new ItemStack(BlockSculpture.materialBlock[id], 1 , meta);
+		ItemStack is = new ItemStack(BlockSculpture.instance, 1 , id);
 		RenderBlocks rb = (RenderBlocks) (data[0]);
 	
-		BlockSculpture.materialBlock[id].setBlockBounds(minmax[0]/8f,minmax[1]/8f,minmax[2]/8f,
-																			minmax[3]/8f,minmax[4]/8f,minmax[5]/8f);
+		BlockSculpture.renderBlockMeta = meta;
+		BlockSculptureRenderer.instance.inv_minmax = minmax;
 		
 		if(type == ItemRenderType.INVENTORY)
 		{
@@ -56,17 +59,16 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		}else if(type == ItemRenderType.ENTITY)
 		{
 			EntityItem eis = (EntityItem)data[1];
-			
-			eis.setEntityItemStack(is);
-			renderItem.doRenderItem(eis, eis.posX, eis.posY, eis.posZ, 0,0);
+			GL11.glScalef(.5f,.5f,.5f);
+			RenderEngine re = RenderManager.instance.renderEngine; 
+			re.bindTexture("/terrain.png");
+			rb.renderBlockAsItem(BlockSculpture.instance, id, 1);
 
 		}else
 		{
 			Minecraft.getMinecraft().entityRenderer.itemRenderer.renderItem((EntityLiving) data[1],
 					is, 0);
 		}
-		
-		BlockSculpture.materialBlock[id].setBlockBounds(0,0,0,1,1,1);
 	}
 
 }

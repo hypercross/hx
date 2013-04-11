@@ -7,12 +7,13 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -23,18 +24,13 @@ public class BlockCanvas extends BlockContainer{
 
 	public BlockCanvas(int id){
 		super(id, Material.cloth);
-		setUnlocalizedName("blockCanvas");		
+		setUnlocalizedName("blockCanvas");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1) {
 		return new TileEntityCanvas();
 	}
-	
-	public void func_94332_a(IconRegister par1IconRegister)
-    {
-        this.field_94336_cN = par1IconRegister.func_94245_a("cloth");
-    }
 	
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
     {
@@ -124,12 +120,11 @@ public class BlockCanvas extends BlockContainer{
 
         ForgeDirection dir = ForgeDirection.getOrientation(face);
 
-        if (Block.isNormalCube(w.getBlockId(x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ)))
-        {
+        int bid = w.getBlockId(x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ);
+        if (Block.isNormalCube(bid) || Block.blocksList[bid] == BlockSculpture.instance)
             return;
-        }
 
-        w.setBlockAndMetadataWithNotify(x, y, z, 0, 0, 3);
+        w.setBlock(x, y, z, 0, 0, 3);
     }
     
     public boolean onBlockActivated(World w, int x, int y, int z, EntityPlayer ep,
@@ -164,6 +159,53 @@ public class BlockCanvas extends BlockContainer{
     	w.markBlockForUpdate(x, y, z);
     	
     	return true;
+    }
+    
+    public static TileEntitySculpture getSculptureOnBack(World w, int x,int y,int z, int face)
+    {
+    	ForgeDirection dir = ForgeDirection.getOrientation(face);
+    	x -= dir.offsetX;
+    	y -= dir.offsetY;
+    	z -= dir.offsetZ;
+    	
+    	try{
+    		return (TileEntitySculpture) w.getBlockTileEntity(x,y,z);
+    	}catch(Exception e)
+    	{
+    		return null;
+    	}
+    }
+    
+    public MovingObjectPosition collisionRayTrace(World w, int x, int y, int z, Vec3 st, Vec3 ed)
+    {
+    	int face = w.getBlockMetadata(x, y, z);
+
+        if (face >= 8)
+        {
+            face = 1;
+        }
+        else if (face < 4)
+        {
+            face = 0;
+        }
+        else
+        {
+            face -= 2;
+        }
+        
+    	TileEntitySculpture tes = getSculptureOnBack(w,x,y,z,face);
+    	if(tes != null)
+    	{
+    		MovingObjectPosition mop =  BlockSculpture.instance.collisionRayTrace(w, tes.xCoord, tes.yCoord,tes.zCoord, st, ed);
+    		if(mop != null)
+    		{
+    			mop.blockX = x;
+    			mop.blockY = y;
+    			mop.blockZ = z;
+    			return mop;
+    		}
+    	}else return super.collisionRayTrace(w, x, y, z, st, ed);
+    	return null;
     }
      
     private static ForgeDirection[] xproj=

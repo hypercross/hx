@@ -45,12 +45,15 @@ public class ItemSchematicRenderer implements IItemRenderer{
 				for(int z = 0;z<8;z++)
 					if(tes.get(x, y, z))
 					{
+						int i = 1;
+						while(tes.get(x, y, z + i))i++;
 						Block.planks.setBlockBounds(x/8f, y/8f, z/8f,
-								(x+1)/8f,(y+1)/8f,(z+1)/8f);
+								(x+1)/8f,(y+1)/8f,(z+i)/8f);
 						
 						ri.renderItemIntoGUI(
 								Minecraft.getMinecraft().fontRenderer,
 								Minecraft.getMinecraft().renderEngine, is, 8,8);
+						z += i-1;
 					}
 		
 		GL11.glPopMatrix();

@@ -64,7 +64,7 @@ public class RecipeSculptureScrap implements IRecipe {
 		
 		else is = new ItemStack(ModMinePainter.instance.item("SculpturePiece").item(), count);
 		
-		is.setItemDamage(meta);
+		if(count % 512 != 0)is.setItemDamage(meta);
 		return is;
 	}
 
