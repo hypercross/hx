@@ -47,7 +47,7 @@ public class ItemSculpturePieceRenderer implements IItemRenderer {
 		ItemStack is = new ItemStack(BlockSculpture.instance, 1 , id);
 		RenderBlocks rb = (RenderBlocks) (data[0]);
 	
-		BlockSculpture.renderBlockMeta = meta;
+		BlockSculpture.renderBlockID = meta;
 		BlockSculptureRenderer.instance.inv_minmax = minmax;
 		
 		if(type == ItemRenderType.INVENTORY)

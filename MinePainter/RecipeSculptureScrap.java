@@ -54,7 +54,7 @@ public class RecipeSculptureScrap implements IRecipe {
 		ItemStack is = null;
 		
 		if(count % 512 == 0)
-			is = new ItemStack(BlockSculpture.materialBlock[meta & 15], count/512, meta >> 4);
+			is = new ItemStack(meta >> 4, count/512, meta & 15);
 		
 		else if(count % 64 == 0)
 			is = new ItemStack(ModMinePainter.instance.item("SculptureCover").item(), count/64);

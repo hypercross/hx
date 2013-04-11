@@ -28,12 +28,9 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class BlockSculpture extends BlockContainer{
 
-	public static Block[] materialBlock = {Block.stone, Block.dirt, Block.sand, Block.blockSteel, Block.blockDiamond, Block.blockGold, Block.blockLapis, Block.blockEmerald,
-		Block.planks, Block.brick, Block.cloth, Block.glass, Block.sandStone, Block.netherBrick, Block.stoneBrick, Block.obsidian};
-
 	public boolean onSelect = false;
 	public static boolean createEmpty = false;
-	public static int renderBlockMeta = 0;
+	public static int renderBlockID = 0;
 	public static boolean dropScrap = true;
 	public static BlockSculpture instance;
 
@@ -58,12 +55,19 @@ public class BlockSculpture extends BlockContainer{
 
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
 	{
-		return materialBlock[par2].getBlockTextureFromSideAndMetadata(par1,renderBlockMeta);
+		return Block.blocksList[renderBlockID].getBlockTextureFromSideAndMetadata(par1,par2);
+	}
+	
+	public static Block getMaterialBlockAt(World w, int x,int y,int z)
+	{
+		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y,z);
+		return Block.blocksList[tes.blockId];
 	}
 
 	public float getBlockHardness(World par1World, int par2, int par3, int par4)
 	{
-		return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].getBlockHardness(par1World, par2, par3, par4);
+		Block b = getMaterialBlockAt(par1World, par2,par3,par4);
+		return b.getBlockHardness(par1World, par2, par3, par4);
 	}
 
 	//	public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
@@ -116,7 +120,7 @@ public class BlockSculpture extends BlockContainer{
 
 	public int idPicked(World par1World, int par2, int par3, int par4)
 	{
-		return materialBlock[par1World.getBlockMetadata(par2, par3, par4)].blockID;
+		return getMaterialBlockAt(par1World,par2,par3,par4).blockID;
 	}
 
 	public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
@@ -298,7 +302,7 @@ public class BlockSculpture extends BlockContainer{
 		
 		if(modCount >= 512)
 		{
-			ItemStack is = new ItemStack(this.materialBlock(tes.getBlockMetadata()), 1, tes.blockMeta);
+			ItemStack is = new ItemStack(tes.blockId, 1, tes.getBlockMetadata());
 			EntityItem entity = new EntityItem(w,x,y,z,is);
 			entity.delayBeforeCanPickup = 10;
 			w.spawnEntityInWorld(entity);
@@ -329,14 +333,9 @@ public class BlockSculpture extends BlockContainer{
 		}
 		ItemStack is = new ItemStack(ModMinePainter.instance.item(name).item());
 		is.stackSize = count;
-		is.setItemDamage(w.getBlockMetadata(x, y, z) + (tes.blockMeta << 4));
+		is.setItemDamage(w.getBlockMetadata(x, y, z) + (tes.blockId << 4));
 		EntityItem entity = new EntityItem(w, x,y,z, is);
 		entity.delayBeforeCanPickup = 10;
 		w.spawnEntityInWorld(entity);
-	}
-
-	public Block materialBlock(int meta)
-	{
-		return materialBlock[meta];
 	}
 }

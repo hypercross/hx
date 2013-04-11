@@ -104,7 +104,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 		renderer.blockAccess = tes;
 		renderer.setRenderBounds(0,0,0,1,1,1);
 		BlockSculpture sculpture = (BlockSculpture) block;
-		BlockSculpture.renderBlockMeta = tes.blockMeta;
+		BlockSculpture.renderBlockID = tes.blockId;
 		
 		blockCoord(tes.xCoord,tes.yCoord,tes.zCoord);
 		

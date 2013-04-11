@@ -33,7 +33,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public static TileEntitySculpture full = new TileEntitySculpture();
 
 	public byte[] data = new byte[64];
-	public int blockMeta;
+	public int blockId;
 
 	//hinge
 	public byte hinge;
@@ -161,7 +161,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	{
 		super.writeToNBT(par1NBTTagCompound);
 		par1NBTTagCompound.setByteArray("sculpture", data);
-		par1NBTTagCompound.setInteger("meta", blockMeta);
+		par1NBTTagCompound.setInteger("meta", blockId);
 		par1NBTTagCompound.setByte("hinge", hinge);
 	}
 
@@ -170,7 +170,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	{
 		super.readFromNBT(par1NBTTagCompound);
 		data = par1NBTTagCompound.getByteArray("sculpture");
-		blockMeta = par1NBTTagCompound.getInteger("meta");
+		blockId = par1NBTTagCompound.getInteger("meta");
 		hinge = par1NBTTagCompound.getByte("hinge");
 		needUpdate = true;
 	}
@@ -228,7 +228,7 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 	public int getBlockId(int var1, int var2, int var3) {
 		return get(var1 - this.xCoord + biasX,
 				var2 - this.yCoord + biasY,
-				var3 - this.zCoord + biasZ) ? ((BlockSculpture)this.getBlockType()).materialBlock(this.getBlockMetadata()).blockID : 0;
+				var3 - this.zCoord + biasZ) ? this.blockId : 0;
 	}
 
 	@Override

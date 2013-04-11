@@ -34,14 +34,15 @@ public class EventHandler {
 			int materialID  = event.entity.worldObj.getBlockId(event.x,event.y,event.z);
 			int meta        = event.entity.worldObj.getBlockMetadata(event.x,event.y,event.z);
 			
+			if(materialID == 0 || BlockSculpture.instance.blockID == materialID)return;
+			
 			BlockSculpture.createEmpty = false;
 			
-			for(int i =0;i<16;i++)
-				if(sculpture.materialBlock(i).blockID == materialID)
+				if(!Block.blocksList[materialID].hasTileEntity(meta))
 				{
-					event.entity.worldObj.setBlock(event.x, event.y, event.z, sculpture.blockID, i, 3);
+					event.entity.worldObj.setBlock(event.x, event.y, event.z, sculpture.blockID, meta, 3);
 					TileEntitySculpture tes = (TileEntitySculpture) event.entity.worldObj.getBlockTileEntity(event.x,event.y,event.z);
-					tes.blockMeta = meta;
+					tes.blockId = materialID;
 					tes.needUpdate = true;
 					return;
 				}

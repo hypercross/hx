@@ -23,12 +23,12 @@ public class PacketHandler implements IPacketHandler{
 			Packet250CustomPayload packet, Player player) {
 		if(!(player instanceof EntityPlayerMP))return;
 		EntityPlayerMP ep = (EntityPlayerMP)player;
-		
+
 		int[] pos = new int[6];
 		int mode = 0;
 		int xpos = 0,ypos = 0,zpos = 0;
 		int face = 0;
-		
+
 		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
 		try {
 			pos[0] = inputStream.readByte();
@@ -42,17 +42,17 @@ public class PacketHandler implements IPacketHandler{
 			xpos   = inputStream.readInt();
 			ypos   = inputStream.readInt();
 			zpos   = inputStream.readInt();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		World w = ep.worldObj;		
 		BlockSculpture sculpture = (BlockSculpture) ModMinePainter.instance.block("Sculpture").block();
-		int id_inhand = ep.getCurrentEquippedItem().getItemDamage() & 15;
-		int meta_inhand = ep.getCurrentEquippedItem().getItemDamage() >> 4;
+		int blockMeta = ep.getCurrentEquippedItem().getItemDamage() & 15;
+		int blockId = ep.getCurrentEquippedItem().getItemDamage() >> 4;
 		int modCount = 0;	
-		
+
 		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(xpos,ypos,zpos);
 
 		if(tes == null && mode > 2)
@@ -67,20 +67,16 @@ public class PacketHandler implements IPacketHandler{
 		{
 			int materialID  = w.getBlockId(xpos,ypos,zpos);
 			int meta        = w.getBlockMetadata(xpos,ypos,zpos);
-			
+
 			BlockSculpture.createEmpty = false;
-			
-			for(int i =0;i<16;i++)
-				if(sculpture.materialBlock(i).blockID == materialID)
-				{
-					w.setBlock(xpos,ypos,zpos, sculpture.blockID, i, 3);
-					tes = (TileEntitySculpture)w.getBlockTileEntity(xpos,ypos,zpos);
-					tes.blockMeta = meta;
-					tes.needUpdate = true;
-					break;
-				}
+
+
+			w.setBlock(xpos,ypos,zpos, sculpture.blockID, meta, 3);
+			tes = (TileEntitySculpture)w.getBlockTileEntity(xpos,ypos,zpos);
+			tes.blockId = materialID;
+			tes.needUpdate = true;
 		}
-		
+
 		if(pos != null)
 		{	
 			if(mode < 3)
@@ -106,19 +102,19 @@ public class PacketHandler implements IPacketHandler{
 								if(w.isAirBlock(ox, oy, oz))
 								{
 									BlockSculpture.createEmpty = true; 
-									w.setBlock( ox,oy,oz, sculpture.blockID, id_inhand, 3);
+									w.setBlock( ox,oy,oz, sculpture.blockID, blockMeta, 3);
 									TileEntitySculpture another = (TileEntitySculpture) w.getBlockTileEntity(ox,oy,oz);
 									another.clear();
-									another.blockMeta = meta_inhand;
+									another.blockId = blockId;
 									another.needUpdate = true;
 								}
 								if(w.getBlockId(ox,oy,oz) != sculpture.blockID)continue;
-								if(w.getBlockMetadata(ox, oy, oz)!= id_inhand)continue;
+								if(w.getBlockMetadata(ox, oy, oz)!= blockMeta)continue;
 
 								TileEntitySculpture another = (TileEntitySculpture) w.getBlockTileEntity(ox,oy,oz);
 								another.set(x , y , z );
 								modCount++;
-							}else if(id_inhand == tes.getBlockMetadata()){
+							}else if(blockMeta == tes.getBlockMetadata()){
 								tes.set(x, y, z);
 								modCount++;
 							}
@@ -137,29 +133,29 @@ public class PacketHandler implements IPacketHandler{
 		}else if(modCount > 0)
 			ep.getCurrentEquippedItem().stackSize--;
 	}
-	
+
 	public static Packet250CustomPayload sendPacket(int x,int y,int z,int... params)
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-				for(int i : params)
-				{
-					outputStream.writeByte(i);
-				}
-			
-		        outputStream.writeInt(x);
-		        outputStream.writeInt(y);
-		        outputStream.writeInt(z);
+			for(int i : params)
+			{
+				outputStream.writeByte(i);
+			}
+
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
 		} catch (Exception ex) {
-		        ex.printStackTrace();
+			ex.printStackTrace();
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
 		packet.channel = "ModMinePainter";
 		packet.data = bos.toByteArray();
 		packet.length = bos.size();
-		
+
 		return packet;
 	}
 }

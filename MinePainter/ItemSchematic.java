@@ -64,21 +64,14 @@ public class ItemSchematic extends Item{
 			return false;
 		}
 
-		boolean found = false;
-		int i = 0;
-		for(i =0;i<16;i++)if(BlockSculpture.materialBlock[i].blockID == blockId)
-		{
-			found = true;
-			break;
-		}
-		if(!found)return false;
+		if(Block.blocksList[blockId].hasTileEntity(meta))return false;
 
 		//put sculpture content onto the block
 		BlockSculpture.createEmpty = true;
-		w.setBlock(x, y, z, sculpture.blockID, i, 3);
+		w.setBlock(x, y, z, sculpture.blockID, meta, 3);
 		TileEntitySculpture tes = (TileEntitySculpture)w.getBlockTileEntity(x, y, z);
 		tes.data = (is.getTagCompound().getCompoundTag("sculptureInfo").getByteArray("data"));
-		tes.blockMeta = meta;
+		tes.blockId = blockId;
 		tes.needUpdate = true;
 
 		byte current = playerFacing(ep);

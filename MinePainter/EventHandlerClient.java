@@ -12,6 +12,8 @@ public class EventHandlerClient {
 	{
 		int blockID = event.player.worldObj.getBlockId(event.target.blockX,
 				event.target.blockY, event.target.blockZ) ;
+		int blockMeta = event.player.worldObj.getBlockMetadata(event.target.blockX,
+				event.target.blockY, event.target.blockZ) ;
 		
 		BlockSculpture sculpture = (BlockSculpture) ModMinePainter.instance.block("Sculpture").block();
 		
@@ -20,11 +22,10 @@ public class EventHandlerClient {
 		
 		boolean valid = false;
 		if(blockID == sculpture.blockID)valid = true;
-		else for(int i =0;i<16;i++)
-			if(sculpture.materialBlock(i).blockID == blockID)
+		else 
+			if(!Block.blocksList[blockID].hasTileEntity(0))
 			{
 				valid = true;
-				break;
 			}
 		
 		if(mode < 3 && !valid)return;
