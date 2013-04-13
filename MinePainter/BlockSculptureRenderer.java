@@ -55,6 +55,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
 		BlockSculpture par1Block = BlockSculpture.instance;
 		int par2 = metadata;
 		
+		GL11.glPushMatrix();
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
         var4.startDrawingQuads();
         var4.setNormal(0.0F, -1.0F, 0.0F);
@@ -81,6 +82,7 @@ public class BlockSculptureRenderer implements ISimpleBlockRenderingHandler{
         renderer.renderSouthFace(par1Block, 0.0D, 0.0D, 0.0D, par1Block.getBlockTextureFromSideAndMetadata(5, par2));
         var4.draw();
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+        GL11.glPopMatrix();
 	}
 	
 	private double[] rotate (double x, double y, double z, double angle)

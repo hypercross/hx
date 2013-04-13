@@ -49,6 +49,7 @@ public class BlockSculpture extends BlockContainer{
 
 	public Icon getBlockTextureFromSideAndMetadata(int par1, int par2)
 	{
+		if(renderBlockID == 0)return Block.stone.getBlockTextureFromSideAndMetadata(par1, par2);
 		return Block.blocksList[renderBlockID].getBlockTextureFromSideAndMetadata(par1,par2);
 	}
 
@@ -117,7 +118,9 @@ public class BlockSculpture extends BlockContainer{
 
 	public int idPicked(World par1World, int par2, int par3, int par4)
 	{
-		return getMaterialBlockAt(par1World,par2,par3,par4).blockID;
+		Block b = getMaterialBlockAt(par1World,par2,par3,par4);
+		if(b == null)return 0;
+		return b.blockID;
 	}
 
 	public void addCollisionBoxesToList(World par1World, int par2, int par3, int par4, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity)
