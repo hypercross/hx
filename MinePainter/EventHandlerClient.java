@@ -23,7 +23,7 @@ public class EventHandlerClient {
 		boolean valid = false;
 		if(blockID == sculpture.blockID)valid = true;
 		else 
-			if(!Block.blocksList[blockID].hasTileEntity(0))
+			if(BlockSculpture.sculptable(blockID, blockMeta))
 			{
 				valid = true;
 			}

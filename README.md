@@ -3,15 +3,18 @@ Minecraft mods started by hypercross:
 
 Lockit - A mod that adds functional locks to the game. Can lock chests/doors or be used as a switch.
 
-Alchemania - A mod that allows you to craft custom medicine powders/pills/solutions, improve them, and apply them on your tools.
+Survivalist - A mod that adds a thirst bar, a stamina bar, a sleep bar and a health bar to the player, making survival more difficult.
+Also allows the player to add customized food/drinks through config.
 
-MinePainter - A mod that allows you to draw 16x16 pixel art on any solid surface
+Spectator - A mod that allows op to take screenshots of any player and upload to the server folder, for anti-cheating purposes.
 
-MCP version : 7.25
+MinePainter - 
+A mod that allows you to draw 16x16 pixel art on any solid surface
+And carve blocks to create sculptures
 
-Minecraft version : 1.4.6
+MCP version : 7.44
 
-Minecraftforge version : 6.5.0.471
+Minecraft version : 1.5.1
 
-Requred library :
-http://www.savarese.com/software/libssrckdtree-j/index.html
+Minecraftforge version : 6.5.0.608+
+

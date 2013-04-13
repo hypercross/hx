@@ -111,14 +111,30 @@
 		    <format property="current.time" pattern="ddMM" />
 		</tstamp>
 		<buildnumber file="${mcp.home}/src/minecraft/hx/survivalist/survivalist.number"/>
-		<zip destfile = "${mcp.home}/../../publish/Minecraft/survivalist-build${build.number}-${current.time}.zip">
+		<zip destfile = "${mcp.home}/../../publish/Minecraft/survivalist/survivalist-build${build.number}-${current.time}.zip">
 		            <zipfileset dir = "${mcp.obfoutput}/minecraft/hx/survivalist" prefix = "hx/survivalist"/>
 		            <zipfileset dir = "${mcp.obfoutput}/minecraft/hx/utils" prefix = "hx/utils"/>
 		            <zipfileset dir = "${mcp.home}/src/minecraft/mods/survivalist" includes = "**/*.png" prefix = "mods/survivalist"/>
 			        <zipfileset dir = "${mcp.home}/jars/config" includes = "survivalist_drinks.cfg" prefix = "hx/survivalist"/>
 		</zip>
+		<copy file="${mcp.home}/../../publish/Minecraft/survivalist-build${build.number}-${current.time}.zip" 
+			tofile="${mcp.home}/../../My Box Files/minecraft_publish/Minecraft/survivalist/survivalist-build${build.number}-${current.time}.zip"/>
 	</target>
 
+	<target name = "zipMinePainter">
+	        <tstamp>
+	            <format property="current.time" pattern="ddMM" />
+	        </tstamp>
+	        <buildnumber file="${mcp.home}/src/minecraft/hx/MinePainter/MinePainter.number"/>
+	        <zip destfile = "${mcp.home}/../../publish/Minecraft/minepainter/minepainter-build${build.number}-${current.time}.zip">
+	                    <zipfileset dir = "${mcp.obfoutput}/minecraft/hx/MinePainter" prefix = "hx/MinePainter"/>
+	                    <zipfileset dir = "${mcp.obfoutput}/minecraft/hx/utils" prefix = "hx/utils"/>
+	                    <zipfileset dir = "${mcp.home}/src/minecraft/mods/MinePainter" includes = "**/*.png" prefix = "mods/MinePainter"/>
+	        </zip>
+		   <copy file="${mcp.home}/../../publish/Minecraft/minepainter/minepainter-build${build.number}-${current.time}.zip" 
+		            tofile="${mcp.home}/../../My Box Files/minecraft_publish/Minecraft/minepainter/minepainter-build${build.number}-${current.time}.zip"/>
+	    </target>
+	
   <target name="recompile" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${mcp.home}" failonerror="true">
       <arg value="${mcp.home}/runtime/recompile.py" />

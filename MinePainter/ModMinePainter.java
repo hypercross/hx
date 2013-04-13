@@ -18,7 +18,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = "mod_MinePainter", name = "MinePainter", version = "0.1.0")
+@Mod(modid = "mod_MinePainter", name = "MinePainter", version = "0.1.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false,
 channels={"ModMinePainter"}, packetHandler = PacketHandler.class)
 public class ModMinePainter extends HyperMod{

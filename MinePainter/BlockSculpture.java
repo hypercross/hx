@@ -42,12 +42,6 @@ public class BlockSculpture extends BlockContainer{
 		this.setHardness(10f);
 		instance = this;
 	}
-	
-	public boolean isBed(World w, int x,int y,int z,EntityLiving ep)
-	{
-		return true;
-	}
-
 	public boolean shouldSideBeRendered(IBlockAccess iba, int par2, int par3, int par4, int par5)
 	{
 		return !iba.isBlockOpaqueCube(par2, par3, par4);
@@ -57,16 +51,19 @@ public class BlockSculpture extends BlockContainer{
 	{
 		return Block.blocksList[renderBlockID].getBlockTextureFromSideAndMetadata(par1,par2);
 	}
-	
-	public static Block getMaterialBlockAt(World w, int x,int y,int z)
+
+	public static Block getMaterialBlockAt(IBlockAccess w, int x,int y,int z)
 	{
 		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y,z);
+		if(tes == null)return null;
 		return Block.blocksList[tes.blockId];
 	}
+
 
 	public float getBlockHardness(World par1World, int par2, int par3, int par4)
 	{
 		Block b = getMaterialBlockAt(par1World, par2,par3,par4);
+		if(b == null)return 0;
 		return b.getBlockHardness(par1World, par2, par3, par4);
 	}
 
@@ -147,21 +144,21 @@ public class BlockSculpture extends BlockContainer{
 
 						super.addCollisionBoxesToList(par1World, par2, par3, par4, par5AxisAlignedBB, par6List, par7Entity);
 
-//						_x = _x/4*4 + 3;
-//						_y = _y/4*4 + 3;
-//						_z = _z/4*4 + 3;
+						//						_x = _x/4*4 + 3;
+						//						_y = _y/4*4 + 3;
+						//						_z = _z/4*4 + 3;
 					}
 				}
 		tes.updateBounds(this);
 	}
-	
+
 	public MovingObjectPosition collisionRayTrace(World w, int x, int y, int z, Vec3 st, Vec3 ed)
 	{
 		TileEntitySculpture tile = (TileEntitySculpture)w.getBlockTileEntity(x, y, z);
-		
+
 		int[] pos = tile.rayTrace(st, ed.addVector(-st.xCoord, -st.yCoord,-st.zCoord));
 		if(pos == null)return null;
-		
+
 		double[] hitVec = tile.hitVec(st, ed.addVector(-st.xCoord, -st.yCoord,-st.zCoord), pos);		
 		return new MovingObjectPosition(x,y,z,pos[3], Vec3.createVectorHelper(hitVec[0],hitVec[1],hitVec[2]));
 	}
@@ -194,7 +191,7 @@ public class BlockSculpture extends BlockContainer{
 		//            par3List.add(new ItemStack(this, 1, var4));
 		//        }
 	}
-	
+
 	private void rotateSculptures(World w, int x,int y,int z, boolean dir)
 	{
 		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y, z);
@@ -211,7 +208,7 @@ public class BlockSculpture extends BlockContainer{
 			TileEntitySculpture tesy = (TileEntitySculpture) w.getBlockTileEntity(x, yBottom, z);
 			if(tes.hinge != tesy.hinge)break;
 		}
-		
+
 		for(int i = yBottom +1;i<yTop;i++)
 		{
 			TileEntitySculpture tesy = (TileEntitySculpture) w.getBlockTileEntity(x, i, z);
@@ -241,13 +238,13 @@ public class BlockSculpture extends BlockContainer{
 					(tes.hinge == 3&& (par6face == 4 || par6face == 3))
 					)rotateSculptures(par1World,par2,par3,par4,!player.isSneaking());
 			else return false;
-			
+
 			par1World.playAuxSFXAtEntity(player, 1003, par2, par3, par4, 0);
 			par1World.notifyBlockChange(par2, par3, par4, this.blockID);
 			return true;
 		}
 		//--hinge
-		
+
 		if(!par1World.isRemote)
 			return false;
 
@@ -270,25 +267,25 @@ public class BlockSculpture extends BlockContainer{
 
 		int id_inhand = player.getCurrentEquippedItem().getItemDamage() & 15;
 		int meta_inhand = player.getCurrentEquippedItem().getItemDamage() >> 4;
-		int face = 0;
-		if(pos != null)face = pos[3];
-		pos = tes.selectionBox(pos, mode, tes.getAxis(look), tes.getMinMax());
-		int modCount = 0;
+			int face = 0;
+			if(pos != null)face = pos[3];
+			pos = tes.selectionBox(pos, mode, tes.getAxis(look), tes.getMinMax());
+			int modCount = 0;
 
-		if(pos != null)
-			PacketDispatcher.sendPacketToServer(PacketHandler.sendPacket(par2, par3, par4, 
-				pos[0],
-				pos[1],
-				pos[2],
-				pos[3],
-				pos[4],
-				pos[5],
-				mode,
-				face
-				));
-		else return false;
+			if(pos != null)
+				PacketDispatcher.sendPacketToServer(PacketHandler.sendPacket(par2, par3, par4, 
+						pos[0],
+						pos[1],
+						pos[2],
+						pos[3],
+						pos[4],
+						pos[5],
+						mode,
+						face
+						));
+			else return false;
 
-		return false;
+			return false;
 	}
 
 	public void dropAllScrap(World w,int x,int y,int z,int modCount)
@@ -299,7 +296,7 @@ public class BlockSculpture extends BlockContainer{
 			Debug.dafuq("cant drop from a non sculpture !");
 			return; 
 		}
-		
+
 		if(modCount >= 512)
 		{
 			ItemStack is = new ItemStack(tes.blockId, 1, tes.getBlockMetadata());
@@ -337,5 +334,38 @@ public class BlockSculpture extends BlockContainer{
 		EntityItem entity = new EntityItem(w, x,y,z, is);
 		entity.delayBeforeCanPickup = 10;
 		w.spawnEntityInWorld(entity);
+	}
+
+	public static boolean sculptable(World w, int x,int y,int z)
+	{
+		int blockID = w.getBlockId(x,y,z);
+		int blockMeta =  w.getBlockMetadata(x, y, z);
+		
+		return sculptable(blockID,blockMeta);
+	}
+	
+	public static boolean sculptable(int blockID, int blockMeta)
+	{
+		if(Block.blocksList[blockID] == null)return false;
+		
+		if(blockID == Block.grass.blockID)return false;
+		if(blockID == Block.cactus.blockID)return false;
+		if(blockID == Block.glass.blockID)return true;
+		if(blockID == Block.leaves.blockID)return false;
+
+		Block b = Block.blocksList[blockID];
+
+		if(b.hasTileEntity(blockMeta))return false;
+		if(!b.renderAsNormalBlock())return false;
+		
+		if(b.getBlockBoundsMaxX()!=1.0f)return false;
+		if(b.getBlockBoundsMaxY()!=1.0f)return false;
+		if(b.getBlockBoundsMaxZ()!=1.0f)return false;
+		if(b.getBlockBoundsMinX()!=0.0f)return false;
+		if(b.getBlockBoundsMinY()!=0.0f)return false;
+		if(b.getBlockBoundsMinZ()!=0.0f)return false;
+		
+		
+		return true;
 	}
 }

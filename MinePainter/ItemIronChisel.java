@@ -13,6 +13,7 @@ public class ItemIronChisel extends Item{
 		setUnlocalizedName("itemIronChisel");
 		this.maxStackSize = 1;
 		this.setCreativeTab(CreativeTabs.tabTools);
+		this.setMaxDamage(240);
 	}
 	
 

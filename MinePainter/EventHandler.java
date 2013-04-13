@@ -38,12 +38,14 @@ public class EventHandler {
 			
 			BlockSculpture.createEmpty = false;
 			
-				if(!Block.blocksList[materialID].hasTileEntity(meta))
+				if(BlockSculpture.sculptable(materialID, meta))
 				{
 					event.entity.worldObj.setBlock(event.x, event.y, event.z, sculpture.blockID, meta, 3);
 					TileEntitySculpture tes = (TileEntitySculpture) event.entity.worldObj.getBlockTileEntity(event.x,event.y,event.z);
 					tes.blockId = materialID;
 					tes.needUpdate = true;
+					
+					is.damageItem(1, event.entityPlayer);
 					return;
 				}
 		}else if(event.entity.worldObj.getBlockId(event.x, event.y, event.z) != sculpture.blockID){

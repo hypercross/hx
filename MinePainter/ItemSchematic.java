@@ -64,7 +64,7 @@ public class ItemSchematic extends Item{
 			return false;
 		}
 
-		if(Block.blocksList[blockId].hasTileEntity(meta))return false;
+		if(!BlockSculpture.sculptable(blockId, meta))return false;
 
 		//put sculpture content onto the block
 		BlockSculpture.createEmpty = true;
