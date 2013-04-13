@@ -2,24 +2,28 @@ package hx.MinePainter;
 
 import hx.utils.Debug;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
-import net.minecraft.entity.passive.EntitySheep;
+import javax.imageio.ImageIO;
 
 public class MPImage {
-	byte pixels[] = new byte[256];
+	BufferedImage img = new BufferedImage(16,16, BufferedImage.TYPE_4BYTE_ABGR);
+	Graphics g = img.createGraphics();
 	
 	public MPImage()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		
-		fill((byte) 31);
+		//fill(-1);
 	}
 	
 	public MPImage(byte[] array)
@@ -27,10 +31,11 @@ public class MPImage {
 		this.fromByteArray(array);
 	}
 	
-	public void fill(int code)
+	public void fill(byte b)
 	{
-		for(int i =0;i<256;i++)
-			pixels[i] = (byte) code;
+		Debug.dafuq();
+		byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
+		Arrays.fill(pixels, b);
 	}
 	
 	public void flood(int x,int y,int before, int after)
@@ -52,27 +57,16 @@ public class MPImage {
 		DataInputStream inputStream = 
 				new DataInputStream(new ByteArrayInputStream(data));
 
-		try {
-			for(int i = 0; i<128; i ++)
-			{
-				byte pix = inputStream.readByte();
-				pixels[(i << 1)] = (byte) ((pix & 255) >> 4); 
-				pixels[(i << 1) + 1] = (byte) (pix & 15);
-			}
+		try
+		{
+			BufferedImage newimg = ImageIO.read(inputStream);
+			if(newimg == null)throw new Exception("oops cant read img");
 			
-			for(int i = 0; i < 32; i ++)
-			{
-				byte pix = inputStream.readByte();
-				byte index = 1;
-				
-				for(int j = 0;j<8;j++)
-				{
-					if((pix & index) != 0)pixels[i*8 + j] |= 16;
-					index = (byte) (index << 1);
-				}
-			}
-			
-		} catch (IOException e) {
+			img = newimg;
+			g = img.createGraphics();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -85,26 +79,7 @@ public class MPImage {
 
 		
 		try {
-			for(int i = 0; i < 128; i ++)
-			{
-				byte b1 = (byte) ((pixels[i << 1] & 15 ) << 4);
-				byte b2 = (byte) (pixels[(i<< 1) + 1] & 15);
-				dos.writeByte(b1 | b2);
-			}
-			
-			for(int i = 0; i < 32; i ++)
-			{
-				byte pix = 0;
-				byte index = 1;
-				
-				for(int j =0;j<8;j++)
-				{
-					if(pixels[i*8 + j] > 15)pix |= index;
-					index = (byte)(index << 1);
-				}
-				dos.writeByte(pix);
-			}
-			
+			ImageIO.write(img, "png", bos);
 		} catch (IOException e) {
 		}
 		
@@ -118,15 +93,34 @@ public class MPImage {
 		x %= 16;
 		y %= 16;
 		
-		return pixels[(x << 4) + y ];
+		return img.getRGB(x, y);
 	}
 	
-	public float[] rgb_at(int x,int y)
-	{
-		int code = at(x,y);
-		if(code < 16)return null;
+	public float[] rgba_at(int x,int y)
+	{	
+		int color = at(x,y);
 		
-		return EntitySheep.fleeceColorTable[15 - (code & 15)];
+		return new float[]{ red(color), green(color), blue(color), alpha(color)};
+	}
+	
+	private float red(int x)
+	{
+		return ((x >> 16) & 0xff) / 256f;
+	}
+	
+	private float green(int x)
+	{
+		return ((x >> 8) & 0xff) / 256f;
+	}
+	
+	private float blue(int x)
+	{
+		return (x & 0xff)/ 256f;
+	}
+	
+	private float alpha(int x)
+	{
+		return ((x >> 24) & 0xff)/256f;
 	}
 	
 	public void set(int x,int y, int color)
@@ -136,6 +130,6 @@ public class MPImage {
 		x %= 16;
 		y %= 16;
 		
-		pixels[(x << 4) + y] = (byte) color;
+		img.setRGB(x, y, color);
 	}
 }

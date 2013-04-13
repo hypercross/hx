@@ -62,16 +62,16 @@ public class ItemEmblemRenderer implements IItemRenderer {
 
 	private void getImage (ItemStack is)
 	{
-		if(!img.fromByteArray(ItemEmblem.checkNBT(is).getByteArray("data")))img.fill(0);
+		if(!img.fromByteArray(ItemEmblem.checkNBT(is).getByteArray("data")))img.fill((byte)-1);
 	}
 	
 	private void drawPixel(int x,int y)
 	{
-		float[] color = img.rgb_at(x, y);
+		float[] color = img.rgba_at(x, y);
 		if(color == null)return ;
 		
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glColor4f(color[0],color[1],color[2], 0.8f);
+		GL11.glColor4f(color[0],color[1],color[2], color[3]);
 
 		GL11.glVertex3d(x, y, 0);
 		GL11.glVertex3d(x, y+1, 0);

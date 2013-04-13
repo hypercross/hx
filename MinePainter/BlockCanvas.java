@@ -9,6 +9,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
@@ -132,16 +133,28 @@ public class BlockCanvas extends BlockContainer{
     {
     	if(w.isRemote)return false;
     	
-    	int code = 0;
+    	int color = -1;
+    	int op = -1;	//-1 == no-op, 0 == draw, 1 == flood, 2 == fill 
+    	
     	if(ep.inventory.getCurrentItem() == null)
-    		code = 0;
+    	{
+    		color = 0;
+    		op = 0;
+    	}
     	else if(ep.getCurrentEquippedItem().itemID == Item.dyePowder.itemID)
     	{
-    		code = ep.getCurrentEquippedItem().getItemDamage() | 16;
+    		color = ep.getCurrentEquippedItem().getItemDamage();
+    		color = ItemDye.dyeColors[color & 15] | 0xff000000;
+    		op = 0;
     	}else if(ep.getCurrentEquippedItem().itemID == Item.slimeBall.itemID)
     	{
-    		code = -1;
-    	}else return false;
+    		color = 0;
+    		op = 2;
+    	}
+    	
+    	if(ep.isWet())op = 1;
+    	
+    	if(op == -1)return false;
     	
     	float px,py;
     	
@@ -150,11 +163,16 @@ public class BlockCanvas extends BlockContainer{
     	
     	TileEntityCanvas tec = (TileEntityCanvas) w.getBlockTileEntity(x, y, z);
     	
-    	if(code == -1)
-    		tec.image.fill(0);
-    	else if(!ep.isWet())
-    		tec.image.set(15-index/16, 15-index%16, code);
-    	else tec.image.flood(15-index/16, 15-index%16, -1, code);
+    	if(op == 0)
+    	{
+    		tec.image.set(15-index/16, 15-index%16, color);
+    	}else if(op == 1)
+    	{
+    		tec.image.flood(15-index/16, 15-index%16, -1, color);
+    	}else if(op == 2)
+    	{
+    		tec.image.fill((byte)color);
+    	}
     	
     	w.markBlockForUpdate(x, y, z);
     	
