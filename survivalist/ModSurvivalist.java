@@ -65,7 +65,7 @@ public class ModSurvivalist extends HyperMod{
 	public ModSurvivalist()
 	{
 		this.BLOCK_BASE_ID = 3510;
-		this.ITEM_BASE_ID  = 9710;
+		this.ITEM_BASE_ID  = 9720;
 		this.addItems("Drink", "WoodenBed");
 		this.addBlocks("WoodenBed", "Table");
 	}

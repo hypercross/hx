@@ -1,11 +1,11 @@
 package hx.utils;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Mod.Init;
@@ -22,6 +22,8 @@ public class HyperMod
     public int ITEM_BASE_ID;
 
     public String MAIN_TEXTURE = null;
+    
+    public static HashSet<Integer> USED_ID = new HashSet<Integer>();
 
     private TreeMap<String, BlockLoader> blockLoaders = new TreeMap<String, BlockLoader>();
     private TreeMap<String, ItemLoader> itemLoaders = new TreeMap<String, ItemLoader>();
@@ -37,36 +39,16 @@ public class HyperMod
     
     public int availableItemId()
     {
-    	int id = ITEM_BASE_ID;
-    	while(true)
-    	{
-    		boolean used = false;
-    		for(ItemLoader il : itemLoaders.values())
-    			if(il.id() == id)
-    			{
-    				used = true;
-    				break;
-    			}
-    		if(!used)return id;
-    		id++;
-    	}
+    	int id = this.ITEM_BASE_ID;
+    	while(HyperMod.USED_ID.contains(id))id++;
+    	return id;
     }
     
     public int availableBlockId()
     {
     	int id = BLOCK_BASE_ID;
-    	while(true)
-    	{
-    		boolean used = false;
-    		for(BlockLoader bl : blockLoaders.values())
-    			if(bl.id() == id)
-    			{
-    				used = true;
-    				break;
-    			}
-    		if(!used)return id;
-    		id++;
-    	}
+    	while(HyperMod.USED_ID.contains(id))id++;
+    	return id;
     }
 
     public BlockLoader block(String name)
