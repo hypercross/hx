@@ -142,7 +142,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 		
 		tes.startDrawingQuads();
 		//GL11.glColor3f(rgb[0],rgb[1],rgb[2]);
-		tes.setColorRGBA_F(rgba[0],rgba[1],rgba[2],rgba[3]);
+		tes.setColorRGBA_F(rgba[0],rgba[1],rgba[2],1.0f);
 
 		tes.addVertexWithUV(x, y, -depth, 0, 0);
 		tes.addVertexWithUV(x+1, y, -depth, 0, 0);

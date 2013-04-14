@@ -53,7 +53,7 @@ public class BlockLoader
 
     public void preInit(Configuration config)
     {
-        blockID = config.getBlock(name, mod.availableBlockId()).getInt();
+        blockID = config.getBlock(name, -1).getInt();
         FMLLog.getLogger().finest("Using " + blockID + " for block " + name);
     }
 

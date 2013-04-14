@@ -16,14 +16,13 @@ import javax.imageio.ImageIO;
 
 public class MPImage {
 	BufferedImage img = new BufferedImage(16,16, BufferedImage.TYPE_4BYTE_ABGR);
-	Graphics g = img.createGraphics();
 	
 	public MPImage()
 	{
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		
-		//fill(-1);
+		fill((byte)-1);
 	}
 	
 	public MPImage(byte[] array)
@@ -63,7 +62,6 @@ public class MPImage {
 			if(newimg == null)throw new Exception("oops cant read img");
 			
 			img = newimg;
-			g = img.createGraphics();
 		}catch(Exception e)
 		{
 			e.printStackTrace();
@@ -131,5 +129,32 @@ public class MPImage {
 		y %= 16;
 		
 		img.setRGB(x, y, color);
+	}
+	
+	public void blend(int x,int y, int color)
+	{
+		while(x<0)x+=16;
+		while(y<0)y+=16;
+		x %= 16;
+		y %= 16;
+		
+		int original = img.getRGB(x, y);
+		int src   = (color >> 24) & 0xFF;
+		int complement = 255 - src;
+		int result = 0;
+		
+		Debug.dafuq("Src: " + src);
+		
+		for(int b = 0 ; b < 32; b += 8)
+		{
+			result += ((( color    >> b) & 0xff) * src        / 255) << b;
+			Debug.dafuq(Integer.toHexString(result));
+			result += ((( original >> b) & 0xff) * complement / 255) << b;
+			Debug.dafuq(Integer.toHexString(result));
+		}
+		
+		Debug.dafuq("blended " + Integer.toHexString(color) + " " + Integer.toHexString(original) + " = " + Integer.toHexString(result));
+		
+		img.setRGB(x,y,result);
 	}
 }

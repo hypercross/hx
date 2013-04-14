@@ -10,6 +10,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
@@ -134,7 +135,7 @@ public class BlockCanvas extends BlockContainer{
     	if(w.isRemote)return false;
     	
     	int color = -1;
-    	int op = -1;	//-1 == no-op, 0 == draw, 1 == flood, 2 == fill 
+    	int op = -1;	//-1 == no-op, 0 == draw, 1 == flood, 2 == fill , 3 == big draw
     	
     	if(ep.inventory.getCurrentItem() == null)
     	{
@@ -150,6 +151,19 @@ public class BlockCanvas extends BlockContainer{
     	{
     		color = 0;
     		op = 2;
+    	}else if(ep.getCurrentEquippedItem().itemID == ItemBrush.instance.itemID || 
+    			ep.getCurrentEquippedItem().itemID == ItemBrushSmall.instance.itemID)
+    	{
+    		for(int i = 0; i < ep.inventory.getSizeInventory(); i ++)
+    		{
+    			ItemStack is = ep.inventory.getStackInSlot(i);
+    			if(is == null)continue;
+    			if(is.itemID != ItemPalette.instance.itemID)continue;
+    			
+    			color = ItemPalette.getColors(is)[0];
+    			op = ep.getCurrentEquippedItem().itemID == ItemBrush.instance.itemID ? 3 : 0;
+    			break;
+    		}
     	}
     	
     	if(ep.isWet())op = 1;
@@ -165,13 +179,33 @@ public class BlockCanvas extends BlockContainer{
     	
     	if(op == 0)
     	{
-    		tec.image.set(15-index/16, 15-index%16, color);
+    		tec.image.blend(15-index/16, 15-index%16, color);
     	}else if(op == 1)
     	{
     		tec.image.flood(15-index/16, 15-index%16, -1, color);
     	}else if(op == 2)
     	{
     		tec.image.fill((byte)color);
+    	}else if(op == 3)
+    	{
+    		int picx = 15-index/16;
+    		int picy = 15-index%16;
+    		
+    		int alpha = (color >> 24) & 0xff;
+    		int half  = ( (alpha >> 1) << 24) + (color & 0xffffff);
+    		int quarter = ( (alpha >> 2) << 24) + (color & 0xffffff);
+    		
+    		for(int i = -1; i<2;i++)
+    			for(int j = -1; j<2;j++)
+    			{
+    				if( Math.abs(i) + Math.abs(j) == 0)
+    					tec.image.blend(picx + i,	picy + j, color);
+    				else if( Math.abs(i) + Math.abs(j) == 1)
+    					tec.image.blend(picx + i,	picy + j, half);
+    				else if( Math.abs(i) + Math.abs(j) == 2)
+    					tec.image.blend(picx + i,	picy + j, quarter);
+    			}
+    		
     	}
     	
     	w.markBlockForUpdate(x, y, z);

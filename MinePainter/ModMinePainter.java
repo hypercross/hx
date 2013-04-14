@@ -29,7 +29,7 @@ public class ModMinePainter extends HyperMod{
 		this.ITEM_BASE_ID  = 9700;
 		addBlocks("Canvas", "Sculpture");
 		addItems("Canvas","SculpturePiece", "SculptureCover", "SculptureBar", "Schematic", 
-				"IronChisel", "DiamondChisel", "StoneChisel", "Hinge");
+				"IronChisel", "DiamondChisel", "StoneChisel", "Hinge", "Palette", "Brush", "BrushSmall");
 	} 
 	
 	@Instance("mod_MinePainter")
@@ -85,6 +85,8 @@ public class ModMinePainter extends HyperMod{
         {
         	MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
         }
+        
+        GameRegistry.addRecipe(new RecipePalette());
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }

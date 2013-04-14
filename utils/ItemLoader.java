@@ -12,7 +12,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 public class ItemLoader
 {
-    private int itemID;
+    int itemID;
     private Item theItem;
     private String name;
     private HyperMod mod;
@@ -43,7 +43,7 @@ public class ItemLoader
 
     public void preInit(Configuration config)
     {
-        itemID = config.getItem(name, mod.availableItemId()).getInt();
+        itemID = config.getItem(name, -1).getInt();
         FMLLog.getLogger().finest("Using " + itemID + " for item " + name);
     }
 
