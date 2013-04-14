@@ -192,8 +192,8 @@ public class BlockCanvas extends BlockContainer{
     		int picy = 15-index%16;
     		
     		int alpha = (color >> 24) & 0xff;
-    		int half  = ( (alpha >> 1) << 24) + (color & 0xffffff);
-    		int quarter = ( (alpha >> 2) << 24) + (color & 0xffffff);
+    		int half  = ( (alpha *3 / 4) << 24) + (color & 0xffffff);
+    		int quarter = ( (alpha >> 1) << 24) + (color & 0xffffff);
     		
     		for(int i = -1; i<2;i++)
     			for(int j = -1; j<2;j++)

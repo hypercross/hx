@@ -32,7 +32,6 @@ public class MPImage {
 	
 	public void fill(byte b)
 	{
-		Debug.dafuq();
 		byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
 		Arrays.fill(pixels, b);
 	}
@@ -143,17 +142,11 @@ public class MPImage {
 		int complement = 255 - src;
 		int result = 0;
 		
-		Debug.dafuq("Src: " + src);
-		
 		for(int b = 0 ; b < 32; b += 8)
 		{
 			result += ((( color    >> b) & 0xff) * src        / 255) << b;
-			Debug.dafuq(Integer.toHexString(result));
 			result += ((( original >> b) & 0xff) * complement / 255) << b;
-			Debug.dafuq(Integer.toHexString(result));
 		}
-		
-		Debug.dafuq("blended " + Integer.toHexString(color) + " " + Integer.toHexString(original) + " = " + Integer.toHexString(result));
 		
 		img.setRGB(x,y,result);
 	}

@@ -86,7 +86,30 @@ public class ModMinePainter extends HyperMod{
         	MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
         }
         
-        GameRegistry.addRecipe(new RecipePalette());
+        if(ItemPalette.instance != null && item("StoneChisel").item() != null)
+        {
+        	GameRegistry.addShapelessRecipe(new ItemStack(ItemPalette.instance), 
+        			new Object[]{new ItemStack(Block.planks), new ItemStack(item("StoneChisel").item())});
+        	GameRegistry.addRecipe(new RecipePalette());
+        }
+        
+        if(ItemBrush.instance != null)
+        {
+        	GameRegistry.addRecipe(new ItemStack(ItemBrush.instance), 
+        			"XX ", "XY ", "  Z",
+        			'X', new ItemStack(Block.cloth),
+        			'Y', new ItemStack(Item.stick),
+        			'Z', new ItemStack(Item.dyePowder,1, 1));
+        }
+        
+        if(ItemBrushSmall.instance != null)
+        {
+        	GameRegistry.addRecipe(new ItemStack(ItemBrushSmall.instance), 
+        			"X  ", " Y ", "  Z",
+        			'X', new ItemStack(Block.cloth),
+        			'Y', new ItemStack(Item.stick),
+        			'Z', new ItemStack(Item.dyePowder,1, 1));
+        }
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }

@@ -87,7 +87,6 @@ public class ItemPalette extends Item{
 	
 	public static void setColors(ItemStack is, int[] colors)
 	{
-		Debug.dafuq(is);
 		NBTTagCompound nbt = is.getTagCompound();
 		if(nbt == null) is.setTagCompound(nbt = new NBTTagCompound());
 		
