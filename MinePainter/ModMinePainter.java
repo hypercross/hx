@@ -88,8 +88,9 @@ public class ModMinePainter extends HyperMod{
         
         if(ItemPalette.instance != null && item("StoneChisel").item() != null)
         {
+        	for(int i = 0 ; i<4;i++)
         	GameRegistry.addShapelessRecipe(new ItemStack(ItemPalette.instance), 
-        			new Object[]{new ItemStack(Block.planks), new ItemStack(item("StoneChisel").item())});
+        			new Object[]{new ItemStack(Block.planks,1,i), new ItemStack(item("StoneChisel").item())});
         	GameRegistry.addRecipe(new RecipePalette());
         }
         

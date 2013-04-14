@@ -13,6 +13,7 @@ public class ItemBrushSmall extends Item{
 		setUnlocalizedName("itemBrushSmall");
 		setCreativeTab(CreativeTabs.tabTools);
 		this.setMaxStackSize(1);
+		this.setMaxDamage(240);
 		instance = this;
 	}
 	

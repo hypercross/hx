@@ -13,6 +13,7 @@ public class ItemDiamondChisel extends Item{
 		setUnlocalizedName("itemDiamondChisel");
 		this.maxStackSize = 1;
 		this.setCreativeTab(CreativeTabs.tabTools);
+		this.setMaxDamage(240);
 	}
 	
 	public void updateIcons(IconRegister par1IconRegister)

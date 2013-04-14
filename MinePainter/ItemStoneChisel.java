@@ -13,6 +13,7 @@ public class ItemStoneChisel extends Item{
 		setUnlocalizedName("itemStoneChisel");
 		this.maxStackSize = 1;
 		this.setCreativeTab(CreativeTabs.tabTools);
+		this.setMaxDamage(64);
 	}
 	
 	public void updateIcons(IconRegister par1IconRegister)

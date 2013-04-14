@@ -45,7 +45,6 @@ public class EventHandler {
 					tes.blockId = materialID;
 					tes.needUpdate = true;
 					
-					is.damageItem(1, event.entityPlayer);
 					return;
 				}
 		}else if(event.entity.worldObj.getBlockId(event.x, event.y, event.z) != sculpture.blockID){

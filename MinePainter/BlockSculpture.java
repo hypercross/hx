@@ -325,6 +325,7 @@ public class BlockSculpture extends BlockContainer{
 
 	private void dropScrap(World w, int x,int y,int z, int count, String name)
 	{
+		
 		TileEntitySculpture tes = (TileEntitySculpture) w.getBlockTileEntity(x, y, z);
 		if(tes == null)
 		{
@@ -334,9 +335,8 @@ public class BlockSculpture extends BlockContainer{
 		ItemStack is = new ItemStack(ModMinePainter.instance.item(name).item());
 		is.stackSize = count;
 		is.setItemDamage(w.getBlockMetadata(x, y, z) + (tes.blockId << 4));
-		EntityItem entity = new EntityItem(w, x,y,z, is);
-		entity.delayBeforeCanPickup = 10;
-		w.spawnEntityInWorld(entity);
+		
+		this.dropBlockAsItem_do(w, x, y, z, is);
 	}
 
 	public static boolean sculptable(World w, int x,int y,int z)

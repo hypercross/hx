@@ -164,6 +164,8 @@ public class BlockCanvas extends BlockContainer{
     			op = ep.getCurrentEquippedItem().itemID == ItemBrush.instance.itemID ? 3 : 0;
     			break;
     		}
+    		
+    		ep.getCurrentEquippedItem().damageItem(1, ep);
     	}
     	
     	if(ep.isWet())op = 1;

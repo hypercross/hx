@@ -75,6 +75,9 @@ public class PacketHandler implements IPacketHandler{
 			tes = (TileEntitySculpture)w.getBlockTileEntity(xpos,ypos,zpos);
 			tes.blockId = materialID;
 			tes.needUpdate = true;
+			
+			if(ep.getCurrentEquippedItem()!= null)
+				ep.getCurrentEquippedItem().damageItem(1, ep);
 		}
 
 		if(pos != null)
