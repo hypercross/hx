@@ -97,17 +97,11 @@ public class HyperMod
         {
             bl.preInit(config);
         }
-        
-        for (BlockLoader bl : blockLoaders.values())
-        	if(bl.blockID == -1)bl.blockID = this.availableBlockId();
 
         for (ItemLoader il : itemLoaders.values())
         {
             il.preInit(config);
         }
-        
-        for (ItemLoader il : itemLoaders.values())
-        	if(il.itemID == -1)il.itemID = this.availableItemId();
 
         for (Field f : this.getClass().getFields())
         {
