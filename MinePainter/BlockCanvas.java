@@ -168,7 +168,7 @@ public class BlockCanvas extends BlockContainer{
     		op = 0;
     	}else if(ep.getCurrentEquippedItem().itemID == Item.slimeBall.itemID)
     	{
-    		color = 0;
+    		color = 0xffffff;
     		op = 2;
     	}else if(ep.getCurrentEquippedItem().itemID == ItemBrush.instance.itemID || 
     			ep.getCurrentEquippedItem().itemID == ItemBrushSmall.instance.itemID)
@@ -206,7 +206,7 @@ public class BlockCanvas extends BlockContainer{
     		tec.image.flood(15-index/16, 15-index%16, -1, color);
     	}else if(op == 2)
     	{
-    		tec.image.fill((byte)color);
+    		tec.image.fill(color);
     	}else if(op == 3)
     	{
     		int picx = 15-index/16;

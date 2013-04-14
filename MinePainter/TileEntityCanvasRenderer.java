@@ -123,6 +123,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
         
 //        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_BLEND);
         
         for(int i =-8;i<8;i++)
         {
@@ -130,6 +131,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
         		drawSquareAt(i,j, depth[(i+8)/2][(j+8)/2]*2,canvas.image.rgba_at(i + 8, j + 8));
         }
 //        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
 	}
@@ -143,7 +145,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 		
 		tes.startDrawingQuads();
 		//GL11.glColor3f(rgb[0],rgb[1],rgb[2]);
-		tes.setColorRGBA_F(rgba[0],rgba[1],rgba[2],1.0f);
+		tes.setColorRGBA_F(rgba[0],rgba[1],rgba[2],rgba[3]);
 
 		tes.addVertexWithUV(x, y, -depth, 0, 0);
 		tes.addVertexWithUV(x+1, y, -depth, 0, 0);

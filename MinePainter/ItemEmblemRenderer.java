@@ -62,7 +62,7 @@ public class ItemEmblemRenderer implements IItemRenderer {
 
 	private void getImage (ItemStack is)
 	{
-		if(!img.fromByteArray(ItemEmblem.checkNBT(is).getByteArray("data")))img.fill((byte)-1);
+		if(!img.fromByteArray(ItemEmblem.checkNBT(is).getByteArray("data")))img.fill(-1);
 	}
 	
 	private void drawPixel(int x,int y)

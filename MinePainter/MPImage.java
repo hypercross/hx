@@ -22,7 +22,7 @@ public class MPImage {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(bos);
 		
-		fill((byte)-1);
+		fill(-1);
 	}
 	
 	public MPImage(byte[] array)
@@ -30,10 +30,14 @@ public class MPImage {
 		this.fromByteArray(array);
 	}
 	
-	public void fill(byte b)
+	public void fill(int color)
 	{
 		byte[] pixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData();
-		Arrays.fill(pixels, b);
+		
+		for(int i = 0 ; i < pixels.length ; i ++)
+		{
+			pixels[i] = (byte) ((color >> ( 3 - i % 4) * 8) & 0xff);
+		}
 	}
 	
 	public void flood(int x,int y,int before, int after)
@@ -140,6 +144,7 @@ public class MPImage {
 		int original = img.getRGB(x, y);
 		int src   = (color >> 24) & 0xFF;
 		int complement = 255 - src;
+		color |= 0xff000000;
 		int result = 0;
 		
 		for(int b = 0 ; b < 32; b += 8)
