@@ -117,7 +117,7 @@
 		            <zipfileset dir = "${mcp.home}/src/minecraft/mods/survivalist" includes = "**/*.png" prefix = "mods/survivalist"/>
 			        <zipfileset dir = "${mcp.home}/jars/config" includes = "survivalist_drinks.cfg" prefix = "hx/survivalist"/>
 		</zip>
-		<copy file="${mcp.home}/../../publish/Minecraft/survivalist-build${build.number}-${current.time}.zip" 
+		<copy file="${mcp.home}/../../publish/Minecraft/survivalist/survivalist-build${build.number}-${current.time}.zip" 
 			tofile="${mcp.home}/../../My Box Files/minecraft_publish/Minecraft/survivalist/survivalist-build${build.number}-${current.time}.zip"/>
 	</target>
 
