@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="MMP" default="reobfuscate">
+<project name="MMP">
   <description>MMP</description>
   <target name="writeversion" depends="buildenvsetup">
     <exec executable="${python.exe}" dir="${basedir}" failonerror="true">

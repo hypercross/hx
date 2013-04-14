@@ -21,6 +21,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 	private int[] ang = { 180, 0, 90, 270 };
 	private float scale = 1/16f * 504/500f;
 	private float zScale = 1/16f;
+	private int brightness;
 	
 	private int verAngle(int meta)
     {
@@ -110,6 +111,8 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 		TileEntitySculpture tes = BlockCanvas.getSculptureOnBack(entity.worldObj,canvas.xCoord,canvas.yCoord,canvas.zCoord,face(meta));
 		int[][] depth = depthMap(tes,meta);
 		
+		brightness = entity.getBlockType().getMixedBrightnessForBlock(entity.worldObj, entity.xCoord,entity.yCoord,entity.zCoord);
+		
 		bindTextureByName("/terrain.png");
 		
 		GL11.glPushMatrix();
@@ -123,6 +126,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
         
 //        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA,GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_BLEND);
         
         for(int i =-8;i<8;i++)
@@ -144,6 +148,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 		Tessellator tes = Tessellator.instance; 
 		
 		tes.startDrawingQuads();
+		tes.setBrightness(brightness);
 		//GL11.glColor3f(rgb[0],rgb[1],rgb[2]);
 		tes.setColorRGBA_F(rgba[0],rgba[1],rgba[2],rgba[3]);
 
