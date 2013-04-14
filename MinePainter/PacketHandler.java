@@ -117,7 +117,10 @@ public class PacketHandler implements IPacketHandler{
 								TileEntitySculpture another = (TileEntitySculpture) w.getBlockTileEntity(ox,oy,oz);
 								another.set(x , y , z );
 								modCount++;
-							}else if(blockMeta == tes.getBlockMetadata()){
+							}else
+							{
+								if(blockMeta != tes.getBlockMetadata())continue;
+								if(blockId   != tes.blockId)continue;
 								tes.set(x, y, z);
 								modCount++;
 							}
