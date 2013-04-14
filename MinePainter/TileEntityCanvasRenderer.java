@@ -19,7 +19,8 @@ import net.minecraftforge.common.ForgeDirection;
 public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
 {
 	private int[] ang = { 180, 0, 90, 270 };
-	private float scale = 1/16f;
+	private float scale = 1/16f * 504/500f;
+	private float zScale = 1/16f;
 	
 	private int verAngle(int meta)
     {
@@ -118,7 +119,7 @@ public class TileEntityCanvasRenderer extends TileEntitySpecialRenderer
         GL11.glRotatef(verAngle(meta), 1, 0, 0);
         GL11.glRotatef(180, 0, 1, 0);
         GL11.glTranslated(0, 0, -0.498d);
-        GL11.glScalef(scale, scale, scale);
+        GL11.glScalef(scale, scale, zScale);
         
 //        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_LIGHTING);

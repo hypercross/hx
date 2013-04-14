@@ -221,8 +221,6 @@ public class TileEntitySculpture extends TileEntity implements IBlockAccess{
 		int[] local = toLocal(var1,var2,var3);
 		if(!invalid(local))
 			return get(local[0],local[1],local[2]);
-		if(this.worldObj.getBlockId(var1, var2, var3) == ModMinePainter.instance.block("Canvas").blockID)
-			return true;
 		
 		return false;
 	}

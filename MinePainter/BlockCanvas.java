@@ -13,6 +13,7 @@ import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Facing;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -42,6 +43,24 @@ public class BlockCanvas extends BlockContainer{
 	public void setBlockBoundsBasedOnState(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
     {
         int meta = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
+        
+        int face = meta;
+        if(face >= 8)face = 1;
+        else if(face < 4)face = 0;
+        else face-=2;
+        
+        TileEntitySculpture tes = getSculptureOnBack(par1IBlockAccess,par2,par3,par4, face);
+        if(tes != null)
+        {
+        	this.setBlockBounds(0 - Facing.offsetsXForSide[face],
+        						0 - Facing.offsetsYForSide[face],
+        						0 - Facing.offsetsZForSide[face],
+        						1 - Facing.offsetsXForSide[face],
+        						1 - Facing.offsetsYForSide[face],
+        						1 - Facing.offsetsZForSide[face]);
+        	
+        	return;
+        }
 
         if (meta >= 8)
         {
@@ -168,7 +187,7 @@ public class BlockCanvas extends BlockContainer{
     		ep.getCurrentEquippedItem().damageItem(1, ep);
     	}
     	
-    	if(ep.isWet())op = 1;
+    	//if(ep.isWet())op = 1;
     	
     	if(op == -1)return false;
     	
@@ -215,7 +234,7 @@ public class BlockCanvas extends BlockContainer{
     	return true;
     }
     
-    public static TileEntitySculpture getSculptureOnBack(World w, int x,int y,int z, int face)
+    public static TileEntitySculpture getSculptureOnBack(IBlockAccess w, int x,int y,int z, int face)
     {
     	ForgeDirection dir = ForgeDirection.getOrientation(face);
     	x -= dir.offsetX;
