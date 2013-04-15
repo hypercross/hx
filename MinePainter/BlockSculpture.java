@@ -288,6 +288,7 @@ public class BlockSculpture extends BlockContainer{
 						));
 			else return false;
 
+			player.swingItem();
 			return false;
 	}
 
