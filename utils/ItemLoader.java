@@ -44,7 +44,19 @@ public class ItemLoader
     public void preInit(Configuration config)
     {
         itemID = config.getItem(name, mod.availableItemId()).getInt();
-        HyperMod.USED_ID.add(itemID);
+        if(HyperMod.USED_ID.contains(itemID))
+        {
+        	for(ItemLoader il : mod.itemLoaders.values())
+        	{
+        		if(il.itemID == itemID)
+        		{
+        			il.itemID = mod.availableItemId();
+        			HyperMod.USED_ID.add(il.itemID);
+        			break;
+        		}
+        	}
+        }else
+        	HyperMod.USED_ID.add(itemID);
         FMLLog.getLogger().finest("Using " + itemID + " for item " + name);
     }
 

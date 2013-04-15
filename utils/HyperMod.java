@@ -25,8 +25,8 @@ public class HyperMod
     
     public static HashSet<Integer> USED_ID = new HashSet<Integer>();
 
-    private TreeMap<String, BlockLoader> blockLoaders = new TreeMap<String, BlockLoader>();
-    private TreeMap<String, ItemLoader> itemLoaders = new TreeMap<String, ItemLoader>();
+    public TreeMap<String, BlockLoader> blockLoaders = new TreeMap<String, BlockLoader>();
+    public TreeMap<String, ItemLoader> itemLoaders = new TreeMap<String, ItemLoader>();
 
     public void addBlocks(String... names)
     {

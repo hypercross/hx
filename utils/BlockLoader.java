@@ -54,7 +54,17 @@ public class BlockLoader
     public void preInit(Configuration config)
     {
         blockID = config.getBlock(name, mod.availableBlockId()).getInt();
-        HyperMod.USED_ID.add(blockID);
+        if(HyperMod.USED_ID.contains(blockID))
+        {
+        	for(BlockLoader bl : mod.blockLoaders.values())
+        		if(bl.blockID == blockID)
+        		{
+        			bl.blockID = mod.availableBlockId();
+        	        HyperMod.USED_ID.add(bl.blockID);
+        			break;
+        		}
+        }else 
+            HyperMod.USED_ID.add(blockID);
         FMLLog.getLogger().finest("Using " + blockID + " for block " + name);
     }
 
