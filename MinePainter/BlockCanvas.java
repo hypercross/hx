@@ -24,10 +24,13 @@ import net.minecraftforge.common.ForgeDirection;
 public class BlockCanvas extends BlockContainer{
 	
 	private float dp = 0.01f;
+	
+	public static BlockCanvas instance ;
 
 	public BlockCanvas(int id){
 		super(id, Material.cloth);
 		setUnlocalizedName("blockCanvas");
+		instance = this; 
 	}
 
 	@Override
@@ -317,7 +320,7 @@ public class BlockCanvas extends BlockContainer{
     	
     	};
    
-    private int pixelIndex(float x,float y,float z,int face)
+    public int pixelIndex(float x,float y,float z,int face)
     {
     	ForgeDirection xdir = xproj[face];
     	ForgeDirection ydir = yproj[face];

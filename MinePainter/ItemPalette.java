@@ -69,6 +69,22 @@ public class ItemPalette extends Item{
 		return colors;
 	}
 	
+	public boolean onItemUse(ItemStack is, EntityPlayer ep, World w, int x, int y, int z, int par7, float _x, float _y, float _z)
+	{
+		if(w.getBlockId(x, y, z) == BlockCanvas.instance.blockID)
+		{
+			int face = w.getBlockMetadata(x, y, z );
+			int index = BlockCanvas.instance.pixelIndex(_x, _y, _z, face);
+			
+			TileEntityCanvas tec = (TileEntityCanvas) w.getBlockTileEntity(x, y, z);
+			getColors(is)[0] = tec.image.at(15-index/16, 15-index%16);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	public ItemStack onItemRightClick(ItemStack is, World w, EntityPlayer ep)
     {
 		setColors(is, shift(getColors(is)));
