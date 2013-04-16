@@ -64,7 +64,10 @@ public class ItemPalette extends Item{
 		
 		NBTTagCompound palette = nbt.getCompoundTag("palette");
 		int[] colors = palette.getIntArray("colors");
-		if(colors.length == 0)return new int[]{0xffffff,0xffffff,0xffffff,0xffffff,0xffffff,0xffffff};
+		if(colors.length == 0)colors =  new int[]{0xffffff,0xffffff,0xffffff,0xffffff,0xffffff,0xffffff};
+		
+		palette.setIntArray("colors", colors);
+		nbt.setCompoundTag("palette", palette);
 		
 		return colors;
 	}
